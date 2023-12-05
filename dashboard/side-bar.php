@@ -39,9 +39,14 @@
                     <div class="user-account-actions">
                         <ul class="g-3">
 
-                            <li><a href="deposit" class="btn btn-lg btn-primary"><span>Deposit</span></a></li>
+                            <li><a href="deposit" class="btn btn-lg btn-primary"><span>Top Up</span></a></li>
 
-                            <li><a href="withdraw" class="btn btn-lg btn-warning"><span>Withdraw</span></a></li>
+                            <li><a href="invest" class="btn btn-lg btn-primary"><span>Invest</span></a></li>
+
+                            <li><a href="save" class="btn btn-lg btn-warning"><span>Save</span></a></li>
+
+                            <!-- <li><a href="withdraw" class="btn btn-lg btn-warning"><span>Withdraw</span></a></li> -->
+
                         </ul>
                     </div>
                 </div>
@@ -95,8 +100,11 @@
                             </li>
                         </ul>
                         <ul class="user-account-links">
+
+                            <li><a href="deposit" class="link"><span>Top Up</span> <em class="icon ni ni-wallet-in"></em></a></li>
+                            <li><a href="invest" class="link"><span>Invest</span> <em class="icon ni ni-wallet-in"></em></a></li>
+                            <li><a href="save" class="link"><span>Save</span> <em class="icon ni ni-wallet-in"></em></a></li>
                             <li><a href="withdraw" class="link"><span>Withdraw Funds</span> <em class="icon ni ni-wallet-out"></em></a></li>
-                            <li><a href="deposit" class="link"><span>Deposit</span> <em class="icon ni ni-wallet-in"></em></a></li>
                         </ul>
                         <ul class="link-list">
                             <li><a href="profile"><em class="icon ni ni-user-alt"></em><span>View Profile</span></a></li>
@@ -163,7 +171,13 @@
                         <li class="nk-menu-item">
                             <a href="deposit" class="nk-menu-link">
                                 <span class="nk-menu-icon"><em class="icon ni ni-wallet-alt"></em></span>
-                                <span class="nk-menu-text">Deposit</span>
+                                <span class="nk-menu-text">Top Up</span>
+                            </a>
+                        </li>
+                        <li class="nk-menu-item">
+                            <a href="invest" class="nk-menu-link">
+                                <span class="nk-menu-icon"><em class="icon ni ni-wallet-alt"></em></span>
+                                <span class="nk-menu-text">Invest</span>
                             </a>
                         </li>
                         <li class="nk-menu-item">
@@ -172,7 +186,7 @@
                                 <span class="nk-menu-text">Withdraw</span>
                             </a>
                         </li>
-                        <li class="nk-menu-item">
+                        <li style="display: none;" class="nk-menu-item">
                             <a href="pricipal-withdrawal" class="nk-menu-link">
                                 <span class="nk-menu-icon"><em class="icon ni ni-wallet-alt"></em></span>
                                 <span class="nk-menu-text">Pricipal Withdrawal</span>
@@ -199,7 +213,13 @@
                         <li class="nk-menu-item">
                             <a href="wallets" class="nk-menu-link">
                                 <span class="nk-menu-icon"><em class="icon ni ni-wallet-alt"></em></span>
-                                <span class="nk-menu-text">Deposit History</span>
+                                <span class="nk-menu-text">Investment History</span>
+                            </a>
+                        </li>
+                        <li class="nk-menu-item">
+                            <a href="top-up-history" class="nk-menu-link">
+                                <span class="nk-menu-icon"><em class="icon ni ni-wallet-alt"></em></span>
+                                <span class="nk-menu-text">Top Up History</span>
                             </a>
                         </li>
                         <li class="nk-menu-item">

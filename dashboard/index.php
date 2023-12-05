@@ -56,9 +56,9 @@ require_once('head.php'); ?>
                                     <div class="nk-block-head-content">
                                         <ul class="nk-block-tools gx-3">
 
-                                            <li><a href="deposit" class="btn btn-primary"><span>Deposit</span> </a></li>
+                                            <li><a href="deposit" class="btn btn-primary"><span>Top Up</span> </a></li>
                                             <!-- <em class="icon ni ni-arrow-long-right"></em> -->
-                                            <li><a href="withdraw" class="btn btn-warning"><span>Withdraw</span> </a></li>
+                                            <li><a href="invest" class="btn btn-warning"><span>Invest</span> </a></li>
 
                                             <li><a href="save" class="btn btn-secondary"><span>Save</span> <em class="icon ni ni-arrow-long-right"></em></a></li>
 
@@ -101,7 +101,7 @@ require_once('head.php'); ?>
                                                         <!-- <div class="nk-wg1-title">In this year</div> -->
                                                         <div class="nk-wg1-group g-2">
                                                             <div class="nk-wg1-sub">
-                                                                <div class="sub-text"><span>Deposit</span>
+                                                                <div class="sub-text"><span>Investment</span>
                                                                     <div class="dot" data-bg="#9cabff" style="background: rgb(156, 171, 255);"></div>
                                                                 </div>
                                                                 <div class="lead-text"><?php print number_format(@$sqli->countTotaldeposit($sqli->getEmail($_SESSION['user_code'])), 3); ?> <?php print $base_currency; ?></div>
@@ -162,7 +162,7 @@ require_once('head.php'); ?>
                                                         <div class="nk-wgw-icon is-default">
                                                             <em class="icon ni ni-sign-naira"><?php print $base_currency; ?></em>
                                                         </div>
-                                                        <h5 class="nk-wgw-title title">Total Deposit</h5>
+                                                        <h5 class="nk-wgw-title title">Total Investments</h5>
                                                     </a>
                                                     <div class="nk-wgw-balance">
                                                         <div class="amount"><?php print $base_currency; ?><?php print number_format(@$sqli->countTotaldeposit($sqli->getEmail($_SESSION['user_code']))); ?><span class="currency currency-nio"></span></div>
@@ -170,11 +170,15 @@ require_once('head.php'); ?>
                                                 </div>
                                                 <div class="nk-wgw-actions">
                                                     <ul>
-                                                        <li><a href="deposit"><em class="icon ni ni-arrow-up-right"></em> <span>Deposit</span></a></li>
+                                                        <li><a href="deposit"><em class="icon ni ni-arrow-up-right"></em> <span>Top Up</span></a></li>
+
+                                                        <li><a href="invest"><em class="icon ni ni-arrow-down-left"></em><span>Invest</span></a></li>
+
+                                                        <li><a href="save"><em class="icon ni ni-arrow-down-left"></em><span>Save</span></a></li>
 
                                                         <li><a href="withdraw"><em class="icon ni ni-arrow-to-right"></em><span>Withdraw</span></a></li>
 
-                                                        <li><a href="save"><em class="icon ni ni-arrow-down-left"></em><span>Save</span></a></li>
+
 
                                                         <!-- <?php print $siteLink; ?>?ref=<?php print $sqli->getRow($sqli->getEmail($_SESSION['user_code']), 'client_username'); ?> -->
                                                     </ul>
@@ -199,9 +203,15 @@ require_once('head.php'); ?>
                                                 </div>
                                                 <div class="nk-wgw-actions">
                                                     <ul>
-                                                        <li><a href="deposit"><em class="icon ni ni-arrow-up-right"></em> <span>Deposit</span></a></li>
-                                                        <li><a href="withdraw"><em class="icon ni ni-arrow-to-right"></em><span>Withdraw</span></a></li>
+
+                                                        <li><a href="deposit"><em class="icon ni ni-arrow-up-right"></em> <span>Top Up</span></a></li>
+
+                                                        <li><a href="invest"><em class="icon ni ni-arrow-down-left"></em><span>Invest</span></a></li>
+
                                                         <li><a href="save"><em class="icon ni ni-arrow-down-left"></em><span>Save</span></a></li>
+
+                                                        <li><a href="withdraw"><em class="icon ni ni-arrow-to-right"></em><span>Withdraw</span></a></li>
+
                                                     </ul>
                                                 </div>
                                             </div>
@@ -224,9 +234,13 @@ require_once('head.php'); ?>
                                                 </div>
                                                 <div class="nk-wgw-actions">
                                                     <ul>
-                                                        <li><a href="deposit"><em class="icon ni ni-arrow-up-right"></em> <span>Deposit</span></a></li>
-                                                        <li><a href="withdraw"><em class="icon ni ni-arrow-to-right"></em><span>Withdraw</span></a></li>
+                                                        <li><a href="deposit"><em class="icon ni ni-arrow-up-right"></em> <span>Top Up</span></a></li>
+
+                                                        <li><a href="invest"><em class="icon ni ni-arrow-down-left"></em><span>Invest</span></a></li>
+
                                                         <li><a href="save"><em class="icon ni ni-arrow-down-left"></em><span>Save</span></a></li>
+
+                                                        <li><a href="withdraw"><em class="icon ni ni-arrow-to-right"></em><span>Withdraw</span></a></li>
                                                     </ul>
                                                 </div>
                                             </div>
@@ -250,9 +264,13 @@ require_once('head.php'); ?>
                                                 </div>
                                                 <div class="nk-wgw-actions">
                                                     <ul>
-                                                        <li><a href="deposit"><em class="icon ni ni-arrow-up-right"></em> <span>Deposit</span></a></li>
-                                                        <li><a href="withdraw"><em class="icon ni ni-arrow-to-right"></em><span>Withdraw</span></a></li>
+                                                        <li><a href="deposit"><em class="icon ni ni-arrow-up-right"></em> <span>Top Up</span></a></li>
+
+                                                        <li><a href="invest"><em class="icon ni ni-arrow-down-left"></em><span>Invest</span></a></li>
+
                                                         <li><a href="save"><em class="icon ni ni-arrow-down-left"></em><span>Save</span></a></li>
+
+                                                        <li><a href="withdraw"><em class="icon ni ni-arrow-to-right"></em><span>Withdraw</span></a></li>
                                                     </ul>
                                                 </div>
                                             </div>

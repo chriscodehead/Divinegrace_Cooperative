@@ -18,6 +18,14 @@ class sqli
 	protected $payment_account = 'payment_account';
 	protected $top_up = 'top_up';
 
+	public function GetTopup($pid, $field)
+	{
+		$sql = "SELECT * FROM $this->top_up WHERE `payment_id` = '" . $pid . "'";
+		$stmt = query_sql($sql);
+		$row = mysqli_fetch_assoc($stmt);
+		return $row[$field];
+	}
+
 	public function countReviews($email)
 	{
 		$sql = "SELECT * FROM $this->review WHERE `email`='" . $email . "' ";

@@ -12,7 +12,13 @@
             <li class="sub-menu <?php print $actova2; ?>">
                 <a href="wallet" class="">
                     <i class="fa fa-bank"></i>
-                    <span style="color:#FFF;">Transactions</span>
+                    <span style="color:#FFF;">Investments</span>
+                </a>
+            </li>
+            <li class="sub-menu <?php print $actova2s; ?>">
+                <a href="top-up" class="">
+                    <i class="fa fa-bank"></i>
+                    <span style="color:#FFF;">Top Ups</span>
                 </a>
             </li>
 

@@ -2013,6 +2013,181 @@ you already made payment. Have any problem? Contact us @ support@omegatrixta.com
 		return $this;
 	}
 
+
+	public function getBalance($email)
+	{
+		$sql = "SELECT `main_account_balance` FROM $this->user_tb WHERE  `email` = '" . $email . "' ";
+		$dbs = new DBConnection();
+		$db = $dbs->DBConnections();
+		$stmt = $db->prepare($sql);
+		if ($stmt->execute()) {
+			$row = $stmt->fetch(PDO::FETCH_ASSOC);
+			$data = $row['main_account_balance'];
+			return $data;
+		} else {
+			$this->_errMsg = 0;
+			return $this->_errMsg;
+		}
+	}
+
+	public function getUserInfo($email, $item)
+	{
+		$sql = "SELECT $item FROM $this->user_tb WHERE  `email` = '" . $email . "' ";
+		$dbs = new DBConnection();
+		$db = $dbs->DBConnections();
+		$stmt = $db->prepare($sql);
+		if ($stmt->execute()) {
+			$row = $stmt->fetch(PDO::FETCH_ASSOC);
+			$data = $row[$item];
+			return $data;
+		} else {
+			$this->_errMsg = 0;
+			return $this->_errMsg;
+		}
+	}
+
+
+	public function SelectTopUp($start, $end)
+	{
+		$sql = "SELECT * FROM $this->top_up ORDER BY id DESC LIMIT $start, $end ";
+		$dbs = new DBConnection();
+		$db = $dbs->DBConnections();
+		$stmt = $db->prepare($sql);
+		$stmt->execute();
+		echo '
+			<table class="tableclass table-responsive table-bordered table-striped table-condensed" style="font-size:11px; color:#06C;"  width="100%">
+						<tr style="color:#000;">
+						<td >S/N</td>
+						<td >User Name</td>
+						<td >Payment ID</td>
+						<td >Email</td>
+						<td >Top Up Amount(N)</td>
+						<td >Current Balance</td>
+						<td >Status</td>
+						<td >Date Reg.</td>
+						<td >Confirm/Unconfirm</td>
+						<td >Edit</td>
+						<td >Remove</td>
+						</tr>';
+		$i = 1;
+		if ($stmt) { //
+			while ($row = $stmt->fetch(PDO::FETCH_ASSOC)) {
+
+				$balance = self::getBalance($row['email']);
+				$name = self::getUserInfo($row['email'], 'first_name') . ' ' . self::getUserInfo($row['email'], 'last_name');
+
+				if ($row['status'] == 'confirmed') {
+					$state = '<a data-toggle="modal" href="#myModuUN' . $row['id'] . '" title="Unconfirm Top Up"><i class="btn btn-default fa fa-unlock"></i></a>';
+				} else if ($row['status'] == 'pending') {
+					$state = '<a data-toggle="modal" href="#myModu' . $row['id'] . '" title="Confirm Top Up"><i class="btn btn-default fa fa-lock"></i></a>';
+				} else {
+					$state = '<a data-toggle="modal" href="#myModu' . $row['id'] . '" title="Confirm Top Up"><i class="btn btn-default fa fa-unlock"></i></a>';
+				}
+				if ($row['status'] == 'confirmed') {
+					$color = '#006600';
+				} else {
+					$color = '';
+				}
+
+				if ($row['status'] == 'confirmed') {
+					$colsa = '#00CC00';
+				} else {
+					$colsa = '';
+				}
+
+				echo '<tr style="color:' . $color . '">
+			<td >' . $i . '</td>
+			<td >' . $name . '</td>
+			<td >' . $row['payment_id'] . '</td>
+			<td >' . $row['email'] . '</td>
+			<td >' . $row['amount'] . '</td>
+				<td >' . $balance . '</td>
+			<td style="color:' . $colsa . '" >' . $row['status'] . '</td>
+			<td >' . $row['date_pay'] . '</td>
+			<td align="center">' . $state . '</td>
+			<td><a href="edit-top-up?id=' . $row['id'] . '"> <i class="btn btn-default fa fa-edit"></i></a></td>	
+			<td><a data-toggle="modal" href="#myModullDEL' . $row['id'] . '" title="End Transaction"><i class="btn btn-default fa fa-trash-o"></i></a></td>
+
+		 			
+				                  <!-- Modal -->
+		    <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModullDEL' . $row['id'] . '" class="modal fade">
+		              <div class="modal-dialog">
+		                  <div class="modal-content">
+		                      <div class="modal-header">
+		                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		                          <h4 class="modal-title">Delete Transaction ?</h4>
+		                      </div>
+		                      <div class="modal-body">
+		                          <p>Are you sure you want to delete this transaction</p>
+		                      </div>
+		                      <div class="modal-footer">
+		                          <button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
+		                          <a href="top-up?del=' . $row['id'] . '">
+								  <span class="btn btn-theme">Delete</span>
+								  </a>
+		                      </div>
+		                  </div>
+		              </div>
+		          </div>
+		          <!-- modal -->
+			
+			<!-- Modal -->
+		    <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModu' . $row['id'] . '" class="modal fade">
+		              <div class="modal-dialog">
+		                  <div class="modal-content">
+		                      <div class="modal-header">
+		                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		                          <h4 class="modal-title">Confirm Users Deposit ?</h4>
+		                      </div>
+		                      <div class="modal-body">
+		                          <p>Are you sure you want to confirm this user? (This mean you have check your bank account and confirmed that the deposit the user claim to have made is true.)</p>
+		                      </div>
+		                      <div class="modal-footer">
+		                          <button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
+		                          <a href="top-up?confirm-deposit=' . $row['id'] . '">
+								  <span class="btn btn-theme">Confirm</span>
+								  </a>
+		                      </div>
+		                  </div>
+		              </div>
+		          </div>
+		          <!-- modal -->
+				  
+				  		<!-- Modal -->
+		    <div aria-hidden="true" aria-labelledby="myModalLabel" role="dialog" tabindex="-1" id="myModuUN' . $row['id'] . '" class="modal fade">
+		              <div class="modal-dialog">
+		                  <div class="modal-content">
+		                      <div class="modal-header">
+		                          <button type="button" class="close" data-dismiss="modal" aria-hidden="true">&times;</button>
+		                          <h4 class="modal-title">Unconfirm Users Deposit ?</h4>
+		                      </div>
+		                      <div class="modal-body">
+		                          <p>Are you sure you want to Unconfirm this user? (This mean you have mistakely confirmed this user in the past and found that you have not received the payment he/she claims to have made.)</p>
+		                      </div>
+		                      <div class="modal-footer">
+		                          <button data-dismiss="modal" class="btn btn-default" type="button">Cancel</button>
+		                          <a href="top-up?unconfirm-deposit=' . $row['id'] . '">
+								  <span class="btn btn-theme">Unconfirm</span>
+								  </a>
+		                      </div>
+		                  </div>
+		              </div>
+		          </div>
+		          <!-- modal -->
+				  
+				  
+				  
+				 
+			</tr>';
+				$i++;
+			}
+		} else {
+			echo '<td colspan="11">No Detail Found!</td>';
+		}
+		echo '</table>';
+		return $this;
+	}
+
 	public function payOutBTC($start, $end)
 	{
 		$sql = "SELECT * FROM $this->withdraw_tb WHERE  (`status`='processing' || `status`='paid') and `remove`='no' ORDER BY id DESC LIMIT $start, $end ";

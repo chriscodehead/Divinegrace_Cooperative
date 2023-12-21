@@ -17,6 +17,27 @@ class sqli
 	protected $savings_tb = 'savings_tb';
 	protected $payment_account = 'payment_account';
 	protected $top_up = 'top_up';
+	protected $my_savings = 'my_savings';
+
+
+	function countInvestments($email, $plan)
+	{
+		$sql = "SELECT * FROM $this->my_savings WHERE `email`='" . $email . "' and `plan`='" . $plan . "' ";
+		$stmt = query_sql($sql);
+		$cont = 0;
+		while ($row = mysqli_fetch_assoc($stmt)) {
+			$cont++;
+		}
+		return $cont;
+	}
+
+	public function getMySavings($id, $item)
+	{
+		$sql = "SELECT * FROM $this->my_savings WHERE `saving_id`='" . $id . "' ";
+		$stmt = query_sql($sql);
+		$row = mysqli_fetch_assoc($stmt);
+		return $row[$item];
+	}
 
 	public function GetTopup($pid, $field)
 	{

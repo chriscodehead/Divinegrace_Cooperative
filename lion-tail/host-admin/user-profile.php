@@ -73,7 +73,7 @@ if (isset($_POST['sub'])) {
     $id_document_status = mysqli_real_escape_string($link, htmlentities($_POST['id_document_status']));
     $id_type = mysqli_real_escape_string($link, htmlentities($_POST['id_type']));
 
-    if (!empty($fname) && !empty($lname) && !empty($sex) && !empty($country) && !empty($phone)) {
+    if (!empty($fname) && !empty($lname)) {
         $fieldA = array('first_name', 'last_name', 'sex', 'country', 'phone', 'id_document_status', 'id_type');
         $valueA = array($fname, $lname, $sex, $country, $phone, $id_document_status, $id_type);
         $msg = $cal->update($user_tb, $fieldA, $valueA, 'email', $user_id);
@@ -164,7 +164,7 @@ require_once('head.php') ?>
                                                             <input type="text" value="<?php print @$cal->selectFrmDB($user_tb, 'first_name', 'email', $user_id); ?>" class="form-control" id="fname" name="fname" placeholder=" ">
                                                         </div>
                                                     </div>
-                                                    
+
                                                     <div class="form-group">
                                                         <label class="col-lg-2 control-label">Last Name</label>
                                                         <div class="col-lg-6">

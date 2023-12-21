@@ -158,9 +158,9 @@ require_once('head.php') ?>
           <th>Savings Plan</th>
           <th>Min Deposit(₦)</th>
           <th>Max Deposit(₦)</th>
-          <th style="display: none;">Monthly incentives(₦)</th>
           <th style="display: none;">Slot Limit</th>
           <th>Duration</th>
+          <th>Termination Charge(%)</th>
           <th>Withdrawal Charges(₦)</th>
           <th>Description</th>
           <th>SHOW/HIDE</th>
@@ -174,8 +174,6 @@ require_once('head.php') ?>
 
            <td><input name="max<?php print $i; ?>" value="<?php print $sqli->getSavings('max' . $i); ?>" type="number" class="form-control" placeholder="" /></td>
 
-           <td style="display: none;"><input name="profit<?php print $i; ?>" value="<?php print $sqli->getSavings('profit' . $i); ?>" type="text" class="form-control" placeholder="" /></td>
-
            <td style="display: none;"><input name="slot<?php print $i; ?>" value="<?php print $sqli->getSavings('slot' . $i); ?>" type="number" class="form-control" placeholder="" /></td>
 
            <td><?php $duration = $sqli->getSavings('duration' . $i); ?>
@@ -185,6 +183,8 @@ require_once('head.php') ?>
              <?php } ?>
             </select>
            </td>
+
+           <td><input name="profit<?php print $i; ?>" value="<?php print $sqli->getSavings('profit' . $i); ?>" type="text" class="form-control" placeholder="" /></td>
 
            <td><input name="charge<?php print $i; ?>" value="<?php print $sqli->getSavings('charge' . $i); ?>" type="text" class="form-control" placeholder="" /></td>
 

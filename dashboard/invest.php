@@ -4,34 +4,35 @@ $title = 'Deposit | ' . $siteName;
 $desc = '';
 require_once('head.php');
 
-$msg = '';
-if (isset($_POST['request'])) {
-  $min = $_POST['min'];
-  $max = $_POST['max'];
-  $plan_type = $_POST['plan_type'];
+$msg = @$_GET['message'];
+if (isset($_POST['submit'])) {
+  $plan_type = $_POST['plan'];
+  $plan = 'LEVEL' . $plan_type;
+  $min = $_POST['min' . $plan_type];
+  $max = $_POST['max' . $plan_type];
   $transaction_id = $bassic->randGenerator();
   $email = $sqli->getEmail($_SESSION['user_code']);
   $amount = $_POST['amount'];
   $profit_acumulation = 0;
-  $plan = $_POST['plan'];
-  $deposit_status = 'processing';
-  $duration = $_POST['duration'];
+  $deposit_status = 'confirmed';
+  $duration = $_POST['duration' . $plan_type];
   $pause_status = '0';
-  $expire_time = time() + ($duration * 60 * 60);
+  $day = $duration * 30;
+  $expire_time = time() + ($day * 24 * 60 * 60);
   $date_created = $bassic->getDate();
   $fname = $sqli->getRow($sqli->getEmail($_SESSION['user_code']), 'first_name');
 
-  if (!empty($amount) && !empty($plan)) {
+  if (!empty($amount) && !empty($plan_type)) {
 
     if ($amount < $min || $amount > $max) {
-      $msg = 'You investment amount must fall within the investment range of $' . $min . ' - $' . $max . '. Thank you';
+      $msg = 'You investment amount must fall within the investment range of $' . $min . ' - $' . $max . '. Thank you' . $plan_type;
     } else {
       $account_balance = $sqli->getRow($sqli->getEmail($_SESSION['user_code']), 'main_account_balance');
       $new_account_balance = $account_balance - $amount;
       if ($account_balance > $amount) {
         $fields = array('id', 'transaction_id', 'email', 'amount', 'profit_acumulation', 'plan', 'deposit_status', 'duration', 'pause_status', 'expire_time', 'date_created');
         $values = array(null, $transaction_id, $email, $amount, $profit_acumulation, $plan, $deposit_status, $duration, $pause_status, $expire_time, $date_created);
-        $insert = $cal->depositBTC($deposit_tb, $fields, $values);
+        $insert = $cal->depositBTC($investment_tb, $fields, $values);
 
         if ($insert) {
 
@@ -43,17 +44,15 @@ if (isset($_POST['request'])) {
           $message = 'Hi ' . $fname . ', your investment of ' . $base_currency . $amount . ' was successfully. Plan:' . $plan;
           $siteName = $siteName;
           $siteDomain = $domain;
-
-          $fieldup = array("request");
-          $valueup = array($plan);
-          $update = $cal->update($user_tb, $fieldup, $valueup, 'email', $sqli->getEmail($_SESSION['user_code']));
           $email_call->generalMessage($subjt, $message, $email, $siteName, $siteDomain);
 
           $msg = 'Your trade was successful!';
           header("location:trade-request-history");
         } else {
-          $msg = 'Error! Please try again.';
+          $msg = 'Unexpected Error! Please try again.';
         }
+      } else {
+        $msg = 'Insufficient fund to carry out this transaction!';
       }
     }
   } else {
@@ -91,16 +90,16 @@ if (isset($_POST['request'])) {
                   <div class="nk-block-head-content text-center">
                     <h2 class="nk-block-title fw-normal">Create Investment</h2>
                     <div class="nk-block-des">
-                      <p>Start earning by creating an investment.</p>
+                      <p>Start earning by creating an investment. <?php print $sqli->countInvestments($sqli->getEmail($_SESSION['user_code']), 2); ?></p>
                     </div>
                   </div>
                 </div>
 
-                <?php if (isset($_GET['error']) && !empty($_GET['error'])) { ?>
+                <?php if (isset($msg) && !empty($msg)) { ?>
                   <div class="alert alert-warning">
                     <div class="alert-cta flex-wrap flex-md-nowrap">
                       <div class="alert-text">
-                        <p><?php print @$_GET['error']; ?></p>
+                        <p><?php print @$msg; ?></p>
                       </div>
                     </div>
                   </div>
@@ -124,6 +123,11 @@ if (isset($_POST['request'])) {
                               $i = 1;
                               $row = mysqli_fetch_assoc($sql);
                               for ($i = 1; $i <= 6; $i++) {
+                                if ($i == 1) {
+                                  $chk = 'checked';
+                                } else {
+                                  $chk = '';
+                                }
                               ?>
                                 <div class="col-sm-6 col-xl-4">
                                   <div class="card card-bordered h-100">
@@ -141,17 +145,19 @@ if (isset($_POST['request'])) {
                                             <?php print $row['duration' . $i]; ?> Months
                                           </p>
 
+                                          <p> Slot: <?php print $base_currency; ?><?php print number_format($row['slot' . $i]); ?></p>
+
                                           <p class="cont">
                                             <center>
                                               <div class="user-avatar sm bg-blue"><span>
-                                                  <input checked value="LEVEL<?php print $i; ?>" type="radio" name="plan" id="plan<?php print $i; ?>"></span>
+                                                  <input <?php print $chk; ?> value="<?php print $i; ?>" type="radio" name="plan" id="plan<?php print $i; ?>"></span>
                                               </div>
                                             </center>
                                           </p>
-                                          <input type="hidden" name="min" value="<?php print $row['min' . $i]; ?>">
-                                          <input type="hidden" name="max" value="<?php print $row['max' . $i]; ?>">
-                                          <input type="hidden" name="plan_type" value="<?php print $i; ?>">
-                                          <input type="hidden" name="duration" value="<?php print $row['duration' . $i]; ?>">
+                                          <input type="hidden" name="min<?php print $i; ?>" id="min<?php print $i; ?>" value="<?php print $row['min' . $i]; ?>">
+                                          <input type="hidden" name="max<?php print $i; ?>" id="max<?php print $i; ?>" value="<?php print $row['max' . $i]; ?>">
+                                          <input type="hidden" name="plan_type<?php print $i; ?>" id="plan_type<?php print $i; ?>" value="<?php print $i; ?>">
+                                          <input type="hidden" id="duration<?php print $i; ?>" name="duration<?php print $i; ?>" value="<?php print $row['duration' . $i]; ?>">
                                         </div>
                                         <div class="project-progress">
                                           <div class="project-progress-details">
@@ -160,11 +166,34 @@ if (isset($_POST['request'])) {
                                           <div class="progress progress-pill progress-md bg-light">
                                             <div class="progress-bar" data-progress="93.5"></div>
                                           </div>
+                                          <center style="margin-top: 20px;">
+                                            <a data-bs-toggle="modal" data-bs-target="#staticBackdrop<?php print $i; ?>" class="btn btn-primary text-white">Details</a>
+                                          </center>
                                         </div>
                                       </div>
                                     </div>
                                   </div>
                                 </div>
+
+                                <!-- Modal -->
+                                <div class="modal fade" id="staticBackdrop<?php print $i; ?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">
+                                  <div class="modal-dialog modal-dialog-centered modal-dialog-scrollable">
+                                    <div class="modal-content">
+                                      <div class="modal-header">
+                                        <h1 class="modal-title fs-5" id="staticBackdropLabel"><?php print $row['level' . $i]; ?> Details</h1>
+                                        <button type="button" class="btn-close" data-bs-dismiss="modal" aria-label="Close"></button>
+                                      </div>
+                                      <div class="modal-body">
+                                        <?php print $row['description' . $i]; ?>
+                                      </div>
+                                      <div class="modal-footer">
+                                        <button type="button" class="btn btn-secondary" data-bs-dismiss="modal">Close</button>
+                                        <!-- <button type="button" class="btn btn-primary">Understood</button> -->
+                                      </div>
+                                    </div>
+                                  </div>
+                                </div>
+
                               <?php } ?>
 
 
@@ -179,7 +208,7 @@ if (isset($_POST['request'])) {
                         <div class="nk-kycfm-content">
                           <div class="">
                             <h5 class="title">Amount</h5>
-                            <input type="text" class="form-control form-control-lg form-control-number" id="amount" name="amount" placeholder="0.055960">
+                            <input type="text" class="form-control form-control-lg form-control-number" id="amount" name="amount" placeholder="10000">
                           </div>
                         </div>
 
@@ -187,7 +216,7 @@ if (isset($_POST['request'])) {
                         <div class="nk-kycfm-footer">
                           <div class="nk-kycfm-action pt-2">
 
-                            <button id="sub" name="submit" style="display: none;" type="submit" class="btn btn-raised btn-primary btn-round waves-effect"></button>
+                            <button style="display: none;" id="sub" name="submit" type="submit" class="btn btn-raised btn-primary btn-round waves-effect">Invest Now!</button>
 
                             <button name="submit" type="button" onClick="invest();" class="btn btn-lg btn-primary theme-button btn btn-raised btn-success waves-effect">Invest Now!</button>
 
@@ -198,6 +227,7 @@ if (isset($_POST['request'])) {
                     </div>
                   </div>
                 </form>
+
               </div>
             </div>
           </div>
@@ -236,48 +266,31 @@ if (isset($_POST['request'])) {
             var hr = new XMLHttpRequest();
             var url = "code_prosessor.php";
             var amount = document.getElementById('amount').value;
-            var plan = $('input[name="plan"]:checked').val();
-            //document.getElementById('plan').value;
-            var coin = document.getElementById('coin').value;
+            var plan_type = $('input[name="plan"]:checked').val();
+            var plan = 'LEVEL' + plan_type;
+            var min = document.getElementById('min' + plan_type).value;
+            var max = document.getElementById('max' + plan_type).value;
             var vars = "amount=" + amount;
-            if (amount == "" || coin == "" || plan == "") {
+            if (amount == "" || plan == "") {
               sweetUnpre("Please fill all necessary fields!");
             } else {
-              if (parseInt(amount) < <?php print $siteMinA; ?>) {
-                sweetUnpre("Error! Min is $<?php print $siteMinA; ?>!");
+
+              if (parseInt(amount) < min || parseInt(amount) > max) {
+                sweetUnpre('You investment amount must fall within the investment range of $' + min +
+                  ' - $' + max +
+                  '. Thank you');
               } else {
 
-                if (plan == 'LEVEL1' && parseInt(amount) < <?php print $siteMinA; ?>) {
-                  sweetUnpre("Error! `<?php print $planA; ?> Plan` Min $<?php print $siteMinA; ?> - Max $<?php print $siteMaxA; ?>");
-                } else {
+                $('#sub').click();
+              }
 
-
-
-                  if (plan == 'LEVEL2' && parseInt(amount) < <?php print $siteMinB; ?>) {
-                    sweetUnpre("Error! `<?php print $planB; ?> Plan` Min $<?php print $siteMinB; ?> - Max $<?php print $siteMaxB; ?>");
-                  } else {
-
-
-
-                    if (plan == 'LEVEL3' && parseInt(amount) < <?php print $siteMinC; ?>) {
-                      sweetUnpre("Error! `<?php print $planC; ?> Plan` Min $<?php print $siteMinC; ?> - Max $<?php print $siteMaxC; ?>");
-                    } else {
-
-                      if (plan == 'LEVEL4' && parseInt(amount) < <?php print $siteMinD; ?>) {
-                        sweetUnpre("Error! `<?php print $planD; ?> Plan` Min $<?php print $siteMinD; ?> - Max $<?php print $siteMaxD; ?>");
-                      } else {
-
-
-                        if (plan == 'LEVEL5' && parseInt(amount) < <?php print $siteMinE; ?>) {
-                          sweetUnpre("Error! `<?php print $planE; ?> Plan` Min $<?php print $siteMinE; ?> - Max $<?php print $siteMaxE; ?>");
-                        } else {
-                          $('#sub').click();
-                        }
-                      }
-                    }
-                  }
-                }
-              } //end
             } //end starter
           } //else empty
+
+          const myModal = document.getElementById('myModal')
+          const myInput = document.getElementById('myInput')
+
+          myModal.addEventListener('shown.bs.modal', () => {
+            myInput.focus()
+          })
         </script>

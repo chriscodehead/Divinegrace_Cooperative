@@ -294,7 +294,7 @@ $(document).ready(function(e) {
                     success: function(data){ 
                         sweetUnpre(data); // The data that is echoed from the ajax.php
 						$('i#sp3').attr("class","fa fa-send-o");
-						setTimeout(refreshThisPage,6000);
+						//setTimeout(refreshThisPage,6000);
                     }
                 });
 				sweetUnpre("Processing...");

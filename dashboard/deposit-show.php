@@ -16,12 +16,13 @@ if (isset($_POST['submit'])) {
   $payment_proof = '';
   $bank_id = @$_POST['coin'];
   $status = 'pending';
+  $type = 'Deposite Top-Up';
   $date_pay = $bassic->getDate();
 
   if (!empty($amount)) {
 
-    $fieldup = array('id', 'payment_id', 'email', 'amount', 'payment_proof', 'bank_id', 'status', 'date_pay');
-    $valueup = array(null, $payment_id, $email, $amount, $payment_proof, $bank_id, $status, $date_pay);
+    $fieldup = array('id', 'payment_id', 'email', 'amount', 'payment_proof', 'bank_id', 'status', 'date_pay', 'type');
+    $valueup = array(null, $payment_id, $email, $amount, $payment_proof, $bank_id, $status, $date_pay, $type);
     if ($cal->insertDataB($top_up, $fieldup, $valueup)) {
 
       $name = $sqli->getRow($sqli->getEmail($_SESSION['user_code']), 'first_name') . ' ' . $sqli->getRow($sqli->getEmail($_SESSION['user_code']), 'last_name');

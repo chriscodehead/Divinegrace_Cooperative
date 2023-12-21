@@ -145,7 +145,7 @@ require_once('head.php'); ?>
                                                             </div>
                                                             <p>Why am i seeing this page? Looks like you have not verified your account yet. Please verify your account to get full access to <strong><?php print $siteName; ?></strong>.</p>
                                                             <ul class="list list-sm list-checked">
-                                                                <li>Add your Wallet Address for payouts <span><a href="add-wallet" class="btn btn-primary">Add Wallet</a></span></li>
+                                                                <li>Add your bank details for payouts <span><a href="add-wallet" class="btn btn-primary">Add Bank Details</a></span></li>
                                                                 <li>Verify your email address <span>(eg: yourname@domain.com) <a data-toggle="modal" href="#myModalAC" class="btn btn-primary">Resend Email</a></span></li>
                                                                 <li>Verify your account by completing your kyc <a href="kyc" class="btn btn-primary">Complet KYC</a></li>
                                                             </ul>

@@ -1,6 +1,6 @@
-<!--sidebar start-->
+<!--sidebar start  style="background-color:#00CC00;" -->
 <aside class="">
-    <div id="sidebar" class="nav-collapse " style="background-color:#00CC00;">
+    <div id="sidebar" class="nav-collapse ">
         <!-- sidebar menu start-->
         <ul class="sidebar-menu">
             <li class="<?php echo $actova1; ?>">

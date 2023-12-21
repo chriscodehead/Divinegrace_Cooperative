@@ -44,7 +44,7 @@ require_once('head.php'); ?>
                     <div class="container-xl wide-lg">
                         <div class="nk-content-body">
                             <div class="nk-block-head">
-                                <div class="nk-block-head-sub"><span>Welcome!</span>
+                                <div class="nk-block-head-sub"><span>Welcome! </span>
                                 </div>
                                 <div class="nk-block-between-md g-4">
                                     <div class="nk-block-head-content">
@@ -350,7 +350,7 @@ require_once('head.php'); ?>
                                                     <div class="nk-tb-col nk-tb-col-status"><span class="sub-text d-md-block">Incentives</span></div>
                                                     <div class="nk-tb-col nk-tb-col-status"><span class="sub-text d-md-block">Duration</span></div>
 
-                                                    <div class="nk-tb-col tb-col-lg"><span>Package</span></div>
+                                                    <!-- <div class="nk-tb-col tb-col-lg"><span>Package</span></div> -->
                                                     <div class="nk-tb-col nk-tb-col-status"><span class="sub-text d-md-block">Date</span></div>
                                                 </div>
 
@@ -385,13 +385,13 @@ require_once('head.php'); ?>
                                                             </div>
 
                                                             <div class="nk-tb-col nk-tb-col-status">
-                                                                <span class="badge badge-sm badge-dim badge-outline-success d-md-inline-flex"><?php print $row['duration']; ?></span>
+                                                                <span class="badge badge-sm badge-dim badge-outline-success d-md-inline-flex"><?php print $row['duration']; ?> Months</span>
                                                             </div>
 
-                                                            <div class="nk-tb-col tb-col-lg">
+                                                            <!-- <div class="nk-tb-col tb-col-lg">
                                                                 <span class="tb-lead-sub"><?php print $row['packagetype']; ?></span>
                                                                 <span class="badge badge-dot badge-warning"></span>
-                                                            </div>
+                                                            </div> -->
 
                                                             <div class="nk-tb-col text-left">
                                                                 <span class="badge badge-sm badge-dim badge-outline-success d-md-inline-flex"><?php print $row['date_created']; ?></span>

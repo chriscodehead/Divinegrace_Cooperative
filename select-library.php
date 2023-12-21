@@ -14,6 +14,7 @@ $payout_manipulate = 'payout_manipulate';
 $savings_tb = 'savings_tb';
 $payment_account = 'payment_account';
 $top_up = 'top_up';
+$my_savings = 'my_savings';
 
 class select extends DBConnection
 {
@@ -38,6 +39,7 @@ class select extends DBConnection
 	protected $savings_tb = 'savings_tb';
 	protected $payment_account = 'payment_account';
 	protected $top_up = 'top_up';
+	protected $my_savings = 'my_savings';
 
 	public function PendingInvestment($email)
 	{
@@ -791,7 +793,7 @@ you already made payment. Have any problem? Contact us @ support@omegatrixta.com
 
 	public function createReferralWithdrawalALL($email, $cointype)
 	{
-		$sql = "SELECT * FROM $this->referral_tb WHERE referral_email = '" . $email . "' and `coin_type`='" . $cointype . "'  and (`status`='confirmed') and `balance` != 0 ORDER BY id DESC";
+		$sql = "SELECT * FROM $this->referral_tb WHERE referral_email = '" . $email . "' and (`status`='confirmed') and `balance` != 0 ORDER BY id DESC";
 		$dbs = new DBConnection();
 		$db = $dbs->DBConnections();
 		$stmt = $db->prepare($sql);
@@ -804,7 +806,7 @@ you already made payment. Have any problem? Contact us @ support@omegatrixta.com
 					/*<input type="checkbox" id="none" class="form-control" name="non" value="" >*/
 					$checkboxx = '--';
 				} else if ($row['status'] == 'confirmed') {
-					$checkboxx = '<input type="checkbox" id="intrestREF" class="form-control" name="intrestREF" value="' . $row['transaction_id'] . '" >
+					$checkboxx = '<input type="checkbox" id="intrestREF" name="intrestREF" value="' . $row['transaction_id'] . '" >
 								   <input class="tamt" id="transactionid" type="hidden" name="transactionid' . $row['id'] . '" value="' . $row['amount'] . '" >
 								   ';
 				}
@@ -813,7 +815,7 @@ you already made payment. Have any problem? Contact us @ support@omegatrixta.com
 		<tr>
 			<td >' . $checkboxx . '</td>
 			<td >' . $row['status'] . '</td>
-			<td style="color:#06C;">' . $row['coin_type'] . '</td>
+			<!--<td style="color:#06C;">' . $row['coin_type'] . '</td>-->
 			<td style="color:#06C;">' . $row['amount'] . '</td>
 			<td style="color:#06C;">' . $row['balance'] . '</td>
 			<td >' . $row['date_created'] . '</td>
@@ -1367,7 +1369,7 @@ you already made payment. Have any problem? Contact us @ support@omegatrixta.com
 
 
 
-	public function getReferralHistory($email)
+	public function getReferralHistory($email, $base_currency)
 	{
 		$sql = "SELECT * FROM $this->referral_tb WHERE referral_email = '" . $email . "' ORDER BY id DESC";
 		$dbs = new DBConnection();
@@ -1380,13 +1382,13 @@ you already made payment. Have any problem? Contact us @ support@omegatrixta.com
 				<tr style="" class="shad">
 						<th >S/N</th>
 						<th >Transaction ID</th>
-						<th >Bonus($)</th>
-						<th >Balance($)</th>
+						<th >Bonus(' . $base_currency . ')</th>
+						<th >Balance(' . $base_currency . ')</th>
 						<th >Username</th>
 						<th >Status</th>
-						<th>Category</th>
+						<!--<th>Category</th>
 						<th>Plan</th>
-						<th>Coin Type</th>
+						<th>Coin Type</th>-->
 						<th >Date Created.</th>
 					</tr>
 			</thead>
@@ -1402,13 +1404,13 @@ you already made payment. Have any problem? Contact us @ support@omegatrixta.com
 		<tr>
 			<td >' . $i . '</td>
 			<td >' . $row['transaction_id'] . '</td>
-			<td style="color:#06C;">' . $row['amount'] . '</td>
-			<td style="color:#06C;">' . $row['balance'] . '</td>
+			<td style="color:#06C;">' . $base_currency . $row['amount'] . '</td>
+			<td style="color:#06C;">' . $base_currency . $row['balance'] . '</td>
 			<td >' . $row['referred_email'] . '</td>
 			<td >' . $row['status'] . '</td>
-			<td >' . $row['deposit_category'] . '</td>
+			<!--<td >' . $row['deposit_category'] . '</td>
 			<td style="color:#06C;">' . $row['plan_type'] . '</td>
-			<td style="color:#06C;">' . $row['coin_type'] . '</td>
+			<td style="color:#06C;">' . $row['coin_type'] . '</td>-->
 			<td >' . $row['date_created'] . '</td>
 	</tr> ';
 				$i++;
@@ -1797,7 +1799,7 @@ you already made payment. Have any problem? Contact us @ support@omegatrixta.com
 						<!--<td >Third party Status</td>
 						<td >Category</td>-->
 						<td>Duration</td>
-						<td >Day On</td>
+						<td >Month On</td>
       <td >Plan</td>
 			   <td >Type</td>
 						<td >Date Reg.</td>
@@ -1858,7 +1860,7 @@ you already made payment. Have any problem? Contact us @ support@omegatrixta.com
 			<td >' . $row['deposit_status'] . '<a target="_blank" style="color:red;" href="' . $row['status_url'] . '">(check)</a></td>
 			<!--<td style="color:' . $colsa . '" >' . $row['received_status'] . '</td>
 			<td >' . $row['deposit_category'] . '</td>-->
-			<td style="color:#06C;">' . $row['duration'] . ' Days</td>
+			<td style="color:#06C;">' . $row['duration'] . ' Months</td>
 			<td style="color:#06C;">' . number_format(($row['day_counter'])) . '</td>
    <td style="color:#06C;">' . $row['plan_type'] . '</td>
 			<td style="color:#06C;">' . $row['coin_type'] . '</td>
@@ -2202,12 +2204,11 @@ you already made payment. Have any problem? Contact us @ support@omegatrixta.com
 						<td >S/N</td>
 						<td >Transaction ID</td>
 						<td >Email</td>
-
 						<td >Amount($)</td>
 						<td >Status</td>
 						<td >Type</td>
-						<td >Plan Type</td>
-			            <td >Coin Type</td>
+						<!--<td >Plan Type</td>
+			   <td >Coin Type</td>-->
 						<td >Date Created</td>
 						<!--<td >Make Payment</td>-->
 						<td >Comfirm Payment</td>
@@ -2268,8 +2269,8 @@ you already made payment. Have any problem? Contact us @ support@omegatrixta.com
 			<td >' . $row['amount'] . '</td>
 			<td style="color:#009900;">' . $row['status'] . '...</td>
 			<td >' . $row['type'] . '</td>
-			<td style="color:#06C;">' . $row['plan_type'] . '</td>
-			<td style="color:#06C;">' . $row['coin_type'] . '</td>
+			<!--<td style="color:#06C;">' . $row['plan_type'] . '</td>
+			<td style="color:#06C;">' . $row['coin_type'] . '</td>-->
 			<td >' . $row['date_time'] . '</td>
 			<!--<td >' . $pay . '</td>-->
 			<td>' . $paida . '</td>

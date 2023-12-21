@@ -263,18 +263,18 @@ class email
         }
     }
 
-    public function contactUsMail($name, $email, $subject, $message)
+    public function contactUsMail($name, $phone, $email, $subject, $message)
     {
         $to  = 'support@' . $this->siteDomain;
         $subject = $subject;
-        $info = $message . '<br /></br><strong>Name: ' . $name . ',<br />Email: ' . $email . '</strong>';
+        $info = $message . '<br /></br><strong>Name: ' . $name . ',<br />Email: ' . $email . ', <br />Phone: ' . $phone . ' </strong>';
         $content = self::generalBody($info);
         $headers = "MIME-Version: 1.0" . "\r\n";
         $headers .= "Content-type:text/html;charset=UTF-8" . "\r\n";
         $headers .= 'From: ' . $this->siteName . ' <support@' . $this->siteDomain . '>' . "\r\n";
         $retval = @mail($to, $subject, $content, $headers);
         if ($retval) {
-            //self::autoReplyMail($name, $email, $subject);
+            self::autoReplyMail($name, $email, $subject);
             return  'Mail sent successfully';
         } else {
             return 'Internal error. Mail fail to send';

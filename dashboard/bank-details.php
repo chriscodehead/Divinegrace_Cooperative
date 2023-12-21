@@ -2,6 +2,7 @@
 require_once('include.php');
 
 if (isset($_POST['sub'])) {
+ $email = $sqli->getEmail($_SESSION['user_code']);
  $name = $sqli->getRow($sqli->getEmail($_SESSION['user_code']), 'first_name') . ' ' . $sqli->getRow($sqli->getEmail($_SESSION['user_code']), 'last_name');
  $account_name = mysqli_real_escape_string($link, $_POST['account_name']);
  $account_number = mysqli_real_escape_string($link, $_POST['account_number']);
@@ -10,7 +11,10 @@ if (isset($_POST['sub'])) {
   $feilds = array('account_name', 'account_number', 'bank_name');
   $value = array($account_name, $account_number, $bank_name);
   $msg = $cal->update($user_tb, $feilds, $value, 'email', $sqli->getEmail($_SESSION['user_code']));
-  $email_call->updateBankDetails($name, $sqli->getEmail($_SESSION['user_code']));
+  //$email_call->updateBankDetails($name, $sqli->getEmail($_SESSION['user_code']));
+  $message = 'Hi ' . $name . ', Your account detail was successfully updated. Thank you';
+  $subjt = 'Bank detail update';
+  $email_call->generalMessage($subjt, $message, $email, $siteName, $domain);
  } else {
   $msg =  "Please enter a valid bank details!";
  }

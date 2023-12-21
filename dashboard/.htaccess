@@ -48,7 +48,11 @@ RewriteRule ^notification/?$ notification.php [NC]
 RewriteRule ^my-referrals/?$ my-referrals.php [NC]
 RewriteRule ^view-wallet-detail/?$ view-wallet-detail.php [NC]
 RewriteRule ^update-password/?$ update-password.php [NC]
-
+RewriteRule ^save/?$ savings.php [NC]
+RewriteRule ^my-savings/?$ my-savings.php [NC]
+RewriteRule ^withdraw-savings/?$ withdraw-savings.php [NC]
+RewriteRule ^saving-termination/?$ saving-termination.php [NC]
+RewriteRule ^savings-topup/?$ savings-topup.php [NC]
 
 RewriteRule ^my-account/?$ profile.php [NC]
 RewriteRule ^two-factor/?$ setting.php [NC]

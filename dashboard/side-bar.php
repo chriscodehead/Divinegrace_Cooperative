@@ -89,15 +89,6 @@
                                     <span class="text-success ml-2">% <em class="icon ni ni-arrow-long-up"></em></span>
                                 </div>
                             </li>
-                            <li>
-                                <!-- <div class="user-account-label">
-                                    <span class="sub-text">Sponsor (Main)</span>
-                                </div>
-                                <div class="user-account-value">
-                                    <span class="sub-text text-base"> <span class="currency currency-btc">
-                                        <?php print $sqli->GetReferral($sqli->getRow($sqli->getEmail($_SESSION['user_code']), 'referral_username'), 'first_name'); ?> </span></span>
-                                </div> -->
-                            </li>
                         </ul>
                         <ul class="user-account-links">
 
@@ -149,89 +140,119 @@
                                 <li class="nk-menu-item">
                                     <a href="profile-security" class="nk-menu-link"><span class="nk-menu-text">Update Security PIN</span></a>
                                 </li>
+
+                                <li class="nk-menu-item">
+                                    <a href="bank-details" class="nk-menu-link"><span class="nk-menu-text">Add Bank Details</span>
+                                    </a>
+                                </li>
                             </ul>
                         </li>
 
-                        <li style="display: none;" class="nk-menu-item">
-                            <a href="add-wallet" class="nk-menu-link">
-                                <div class="wallet-icon"><em class="icon ni ni-plus"></em></div>
-                                <div class="wallet-text">
-                                    <h6 class="wallet-name">Add Bank Details</h6>
-                                </div>
+                        <li class="nk-menu-item has-sub">
+                            <a href="#" class="nk-menu-link nk-menu-toggle">
+                                <span class="nk-menu-icon"><em class="icon ni ni-users"></em></span>
+                                <span class="nk-menu-text"> Deposit</span>
                             </a>
+                            <ul class="nk-menu-sub">
+                                <li class="nk-menu-item">
+                                    <a href="deposit" class="nk-menu-link">
+                                        <span class="nk-menu-text">Top Up</span>
+                                    </a>
+                                </li>
+
+                                <li class="nk-menu-item">
+                                    <a href="invest" class="nk-menu-link">
+                                        <span class="nk-menu-text">Invest</span>
+                                    </a>
+                                </li>
+
+                            </ul>
                         </li>
 
-                        <li class="nk-menu-item">
-                            <a href="bank-details" class="nk-menu-link">
-                                <span class="nk-menu-icon"><em class="icon ni ni-plus"></em></span>
-                                <span class="nk-menu-text">Add Bank Details</span>
+
+                        <li class="nk-menu-item has-sub">
+                            <a href="#" class="nk-menu-link nk-menu-toggle">
+                                <span class="nk-menu-icon"><em class="icon ni ni-users"></em></span>
+                                <span class="nk-menu-text"> Savings</span>
                             </a>
+                            <ul class="nk-menu-sub">
+                                <li class="nk-menu-item">
+                                    <a href="save" class="nk-menu-link">
+                                        <span class="nk-menu-text">Save</span>
+                                    </a>
+                                </li>
+
+                                <li class="nk-menu-item">
+                                    <a href="my-savings" class="nk-menu-link">
+                                        <span class="nk-menu-text">My-Savings</span>
+                                    </a>
+                                </li>
+
+                            </ul>
                         </li>
 
-                        <li class="nk-menu-item">
-                            <a href="deposit" class="nk-menu-link">
-                                <span class="nk-menu-icon"><em class="icon ni ni-wallet-alt"></em></span>
-                                <span class="nk-menu-text">Top Up</span>
+                        <li class="nk-menu-item has-sub">
+                            <a href="#" class="nk-menu-link nk-menu-toggle">
+                                <span class="nk-menu-icon"><em class="icon ni ni-users"></em></span>
+                                <span class="nk-menu-text"> Withdrawals</span>
                             </a>
+                            <ul class="nk-menu-sub">
+                                <li class="nk-menu-item">
+                                    <a href="withdraw" class="nk-menu-link">
+                                        <span class="nk-menu-text">Investment Withdrawal</span>
+                                    </a>
+                                </li>
+
+                                <li class="nk-menu-item">
+                                    <a href="referral-bonus" class="nk-menu-link">
+                                        <span class="nk-menu-text">My Bonus Withdrawal</span>
+                                    </a>
+                                </li>
+
+                            </ul>
                         </li>
-                        <li class="nk-menu-item">
-                            <a href="invest" class="nk-menu-link">
-                                <span class="nk-menu-icon"><em class="icon ni ni-wallet-alt"></em></span>
-                                <span class="nk-menu-text">Invest</span>
+
+
+                        <li class="nk-menu-item has-sub">
+                            <a href="#" class="nk-menu-link nk-menu-toggle">
+                                <span class="nk-menu-icon"><em class="icon ni ni-users"></em></span>
+                                <span class="nk-menu-text"> History</span>
                             </a>
+                            <ul class="nk-menu-sub">
+                                <li class="nk-menu-item">
+                                    <a href="my-referrals" class="nk-menu-link">
+                                        <span class="nk-menu-text">Referrals</span>
+                                    </a>
+                                </li>
+
+                                <li class="nk-menu-item">
+                                    <a href="wallets" class="nk-menu-link">
+                                        <span class="nk-menu-text">Investment History</span>
+                                    </a>
+                                </li>
+                                <li class="nk-menu-item">
+                                    <a href="top-up-history" class="nk-menu-link">
+                                        <span class="nk-menu-text">Top Up History</span>
+                                    </a>
+                                </li>
+                                <li class="nk-menu-item">
+                                    <a href="withdrawal-history" class="nk-menu-link">
+                                        <span class="nk-menu-text">Withdrawal History</span>
+                                    </a>
+                                </li>
+                                <li class="nk-menu-item">
+                                    <a href="referral-history" class="nk-menu-link">
+                                        <span class="nk-menu-text">Referral History</span>
+                                    </a>
+                                </li>
+
+                            </ul>
                         </li>
-                        <li class="nk-menu-item">
-                            <a href="withdraw" class="nk-menu-link">
-                                <span class="nk-menu-icon"><em class="icon ni ni-wallet-alt"></em></span>
-                                <span class="nk-menu-text">Withdraw</span>
-                            </a>
-                        </li>
-                        <li style="display: none;" class="nk-menu-item">
-                            <a href="pricipal-withdrawal" class="nk-menu-link">
-                                <span class="nk-menu-icon"><em class="icon ni ni-wallet-alt"></em></span>
-                                <span class="nk-menu-text">Pricipal Withdrawal</span>
-                            </a>
-                        </li>
-                        <li class="nk-menu-item">
-                            <a href="referral-bonus?id=USDT" class="nk-menu-link">
-                                <span class="nk-menu-icon"><em class="icon ni ni-user-c"></em></span>
-                                <span class="nk-menu-text">My Bonus Earnings</span>
-                            </a>
-                        </li>
-                        <li class="nk-menu-item">
-                            <a href="my-referrals" class="nk-menu-link">
-                                <span class="nk-menu-icon"><em class="icon ni ni-user-c"></em></span>
-                                <span class="nk-menu-text">Referrals</span>
-                            </a>
-                        </li>
+
                         <li class="nk-menu-item">
                             <a href="commission" class="nk-menu-link">
                                 <span class="nk-menu-icon"><em class="icon ni ni-wallet-alt"></em></span>
                                 <span class="nk-menu-text">Commission</span>
-                            </a>
-                        </li>
-                        <li class="nk-menu-item">
-                            <a href="wallets" class="nk-menu-link">
-                                <span class="nk-menu-icon"><em class="icon ni ni-wallet-alt"></em></span>
-                                <span class="nk-menu-text">Investment History</span>
-                            </a>
-                        </li>
-                        <li class="nk-menu-item">
-                            <a href="top-up-history" class="nk-menu-link">
-                                <span class="nk-menu-icon"><em class="icon ni ni-wallet-alt"></em></span>
-                                <span class="nk-menu-text">Top Up History</span>
-                            </a>
-                        </li>
-                        <li class="nk-menu-item">
-                            <a href="withdrawal-history" class="nk-menu-link">
-                                <span class="nk-menu-icon"><em class="icon ni ni-wallet-alt"></em></span>
-                                <span class="nk-menu-text">Withdrawal History</span>
-                            </a>
-                        </li>
-                        <li class="nk-menu-item">
-                            <a href="referral-history" class="nk-menu-link">
-                                <span class="nk-menu-icon"><em class="icon ni ni-wallet-alt"></em></span>
-                                <span class="nk-menu-text">Referral History</span>
                             </a>
                         </li>
 
@@ -241,6 +262,7 @@
                                 <span class="nk-menu-text">Notification</span>
                             </a>
                         </li>
+
                         <li class="nk-menu-item">
                             <a target="_blank" href="mailto:<?php print $siteEmail; ?>" class="nk-menu-link">
                                 <span class="nk-menu-icon"><em class="icon ni ni-help-alt"></em></span>

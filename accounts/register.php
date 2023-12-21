@@ -13,6 +13,7 @@ if (isset($_POST['sub'])) {
     $sex = 'none';
     $fname = ucfirst(mysqli_real_escape_string($link, strtolower($_POST['fname'])));
     $lname = ucfirst(strtolower(mysqli_real_escape_string($link, $_POST['lname'])));
+    $name = $fname . ' ' . $lname;
     $email = strtolower(mysqli_real_escape_string($link, $_POST['email']));
     $phone  = ''; //mysqli_real_escape_string($link, $_POST['phone']);
     $address = 'none';
@@ -34,6 +35,7 @@ if (isset($_POST['sub'])) {
     $hashed_pot = $bassic->passwordHash($agorithm, $email);
     $payment_activation_status = 'no';
     $main_account_balance = 0;
+    $savings_account = 0;
     $id_document_status = 'Not Verified';
 
     if (!empty($email) && !empty($fname) && !empty($lname) && !empty($pass)) {
@@ -47,12 +49,12 @@ if (isset($_POST['sub'])) {
                     } else if ($cal->checkifdataExists($username, 'client_username', $user_tb) == 0) {
                         if (!empty($affiliateusername)) {
                             if ($cal->checkifdataExists($affiliateusername, 'client_username', $user_tb) == 1) {
-                                $feilds = array('id', 'user_code', 'first_name', 'last_name', 'sex', 'country', 'email', 'phone', 'preferred_trader', 'wallet_address', 'password', 'date_reg', 'last_activity', 'email_activation', 'blocked_account', 'forget_password_code', 'passport', 'referral_username', 'client_username', 'address', 'ethereum_wallet_address', 'account_type', 'hashed_pot', 'two_factor', 'two_factor_code', 'rawpass', 'payment_activation_status', 'main_account_balance', 'id_document_status');
-                                $value = array(null, $bassic->randGenerator(), $fname, $lname, $sex, $country, $email, $phone, $trader, $walletaddress, $passh, $bassic->getDate(), $bassic->getUrl(), $email_activation, $blocked_account, $fgt_password_code, $passport, $affiliateusername, $username, $address, $ethereumaddress, $account_type, $hashed_pot, $two_factor, $two_factor_code, $rawpass, $payment_activation_status, $main_account_balance, $id_document_status);
+                                $feilds = array('id', 'user_code', 'first_name', 'last_name', 'sex', 'country', 'email', 'phone', 'preferred_trader', 'wallet_address', 'password', 'date_reg', 'last_activity', 'email_activation', 'blocked_account', 'forget_password_code', 'passport', 'referral_username', 'client_username', 'address', 'ethereum_wallet_address', 'account_type', 'hashed_pot', 'two_factor', 'two_factor_code', 'rawpass', 'payment_activation_status', 'main_account_balance', 'id_document_status', 'savings_account');
+                                $value = array(null, $bassic->randGenerator(), $fname, $lname, $sex, $country, $email, $phone, $trader, $walletaddress, $passh, $bassic->getDate(), $bassic->getUrl(), $email_activation, $blocked_account, $fgt_password_code, $passport, $affiliateusername, $username, $address, $ethereumaddress, $account_type, $hashed_pot, $two_factor, $two_factor_code, $rawpass, $payment_activation_status, $main_account_balance, $id_document_status, $savings_account);
                                 $result = $cal->insertDataB($user_tb, $feilds, $value);
                                 $msg = $result;
                                 if ($result == 'Registration was successful. Proceed to login!') {
-                                    $email_call->ActivateMail($email, $passh);
+                                    $email_call->ActivateMail($email, $passh, $name);
                                     $email_call->referalNew($nameM, $emailM, $nameR, $emailR, $usernameM, $usernameR);
                                     header("location:login?inc=" . $msg);
                                 }
@@ -62,12 +64,12 @@ if (isset($_POST['sub'])) {
                         } else {
                             //$msg = 'Enter referral details to continue!';
                             //referral email empty
-                            $feilds = array('id', 'user_code', 'first_name', 'last_name', 'sex', 'country', 'email', 'phone', 'preferred_trader', 'wallet_address', 'password', 'date_reg', 'last_activity', 'email_activation', 'blocked_account', 'forget_password_code', 'passport', 'referral_username', 'client_username', 'address', 'ethereum_wallet_address', 'account_type', 'hashed_pot', 'two_factor', 'two_factor_code', 'rawpass', 'payment_activation_status', 'main_account_balance', 'id_document_status');
-                            $value = array(null, $bassic->randGenerator(), $fname, $lname, $sex, $country, $email, $phone, $trader, $walletaddress, $passh, $bassic->getDate(), $bassic->getUrl(), $email_activation, $blocked_account, $fgt_password_code, $passport, $affiliateusername, $username, $address, $ethereumaddress, $account_type, $hashed_pot, $two_factor, $two_factor_code, $rawpass, $payment_activation_status, $main_account_balance, $id_document_status);
+                            $feilds = array('id', 'user_code', 'first_name', 'last_name', 'sex', 'country', 'email', 'phone', 'preferred_trader', 'wallet_address', 'password', 'date_reg', 'last_activity', 'email_activation', 'blocked_account', 'forget_password_code', 'passport', 'referral_username', 'client_username', 'address', 'ethereum_wallet_address', 'account_type', 'hashed_pot', 'two_factor', 'two_factor_code', 'rawpass', 'payment_activation_status', 'main_account_balance', 'id_document_status', 'savings_account');
+                            $value = array(null, $bassic->randGenerator(), $fname, $lname, $sex, $country, $email, $phone, $trader, $walletaddress, $passh, $bassic->getDate(), $bassic->getUrl(), $email_activation, $blocked_account, $fgt_password_code, $passport, $affiliateusername, $username, $address, $ethereumaddress, $account_type, $hashed_pot, $two_factor, $two_factor_code, $rawpass, $payment_activation_status, $main_account_balance, $id_document_status, $savings_account);
                             $result = $cal->insertDataB($user_tb, $feilds, $value);
                             $msg =  $result;
                             if ($result == 'Registration was successful. Proceed to login!') {
-                                $email_call->ActivateMail($email, $passh);
+                                $email_call->ActivateMail($email, $passh, $name);
                                 header("location:login?inc=" . $msg);
                             }
                         }
@@ -97,7 +99,7 @@ require_once('head.php'); ?>
                 <div class="col-lg-6 form-section">
                     <div class="form-inner">
                         <a href="../" class="">
-                            <img src="../img/logo.png" alt="logo">
+                            <img src="../img/logo.png" width="200px" alt="logo">
                         </a>
                         <h3 style="text-align: left; padding-top: 30px;">Create an account</h3>
                         <?php if (!empty($msg)) { ?>

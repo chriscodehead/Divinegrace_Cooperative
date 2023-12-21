@@ -3,13 +3,15 @@ require_once('include.php');
 require_once('check-verification.php');
 $msg = '';
 if (isset($_POST['sub'])) {
-    $coin_type = $_POST['bs-method'];
-    $payment_wallet = $sqli->getRow($sqli->getEmail($_SESSION['user_code']), 'usdt');
+    $coin_type = 'BANK';
+    $account_number = $sqli->getRow($sqli->getEmail($_SESSION['user_code']), 'account_number');
+    $account_name = $sqli->getRow($sqli->getEmail($_SESSION['user_code']), 'account_name');
+    $bank_name = $sqli->getRow($sqli->getEmail($_SESSION['user_code']), 'bank_name');
     $available_balance = $sqli->getRow($sqli->getEmail($_SESSION['user_code']), 'main_account_balance');
     $amount_to_withdraw = $_POST['amount'];
     $pin = $sqli->getRow($sqli->getEmail($_SESSION['user_code']), 'pin');
     $security_pin = $_POST['pin'];
-    $plan_type = 'REFERRAL';
+    $plan_type = 'INVESTMENT';
     $name = $sqli->getRow($sqli->getEmail($_SESSION['user_code']), 'first_name');
     $veri = $sqli->getRow($sqli->getEmail($_SESSION['user_code']), 'id_document_status');
 
@@ -17,8 +19,8 @@ if (isset($_POST['sub'])) {
 
         if ($veri == 'Verified') {
 
-            if ($payment_wallet == "") {
-                $msg = 'Please supply your payment wallet address. <a href="add-wallet">Click here to!</a>';
+            if ($account_number == "" || $account_name == "" || $bank_name == "") {
+                $msg = 'Please supply your payment account details. <a href="bank-details">Click here to!</a>';
             } else {
                 if ($pin == "") {
                     $msg = 'Please create a security PIN to continue. <a href="profile-security">Click here to!</a>';
@@ -35,9 +37,17 @@ if (isset($_POST['sub'])) {
                                         $amount_to_withdraw = $amount_to_withdraw - $withdrawal_charge;
                                         $trn_id = $bassic->randGenerator();
                                         $fieldsW = array('id', 'transaction_id', 'email', 'amount', 'status', 'date_time', 'type', 'remove', 'plan_type', 'coin_type');
-                                        $valuesW = array(null, $trn_id, $sqli->getEmail($_SESSION['user_code']), $amount_to_withdraw, 'processing', $bassic->getDate(), 'Referral Withdrawal', 'no', $plan_type, $coin_type);
+                                        $valuesW = array(null, $trn_id, $sqli->getEmail($_SESSION['user_code']), $amount_to_withdraw, 'processing', $bassic->getDate(), 'Investment Withdrawal', 'no', $plan_type, $coin_type);
                                         $info = $cal->CreatWithdrawBTC($withdraw_tb, $fieldsW, $valuesW);
-                                        $email_call->withdrwalNotification($amount_to_withdraw, $plan_type, 'USDT', $trn_id, $name, $sqli->getEmail($_SESSION['user_code']), $payment_wallet);
+
+                                        $email_call->withdrwalNotification($amount_to_withdraw, $plan_type, 'BANK', $trn_id, $name, $sqli->getEmail($_SESSION['user_code']), $account_number);
+
+                                        $subjt = 'Withdrawal Notification From ' . $name;
+
+                                        $message = 'Hi Admin, ' . $name . ' just made a withdrwal of ' . $amount_to_withdraw . '. Payment Details: <br>Bank Name:' . $bank_name . '<br> Account Number: ' . $account_number . '<br> Account Name: ' . $account_name;
+
+                                        $email_call->generalMessage($subjt, $message, $siteEmail, $siteName, $domain);
+
                                         if ($info == 88) {
                                             $msg = 'Your withdrawal was successful expect payment soon!';
                                         } else {
@@ -96,7 +106,7 @@ require_once('head.php'); ?>
                                     </ul>
                                 </div>
                                 <div class="buysell-title text-center">
-                                    <h2 class="title">Withdraw Your Referral Earnings!</h2>
+                                    <h2 class="title">Withdraw Your Earnings!</h2>
                                 </div>
                                 <div class="buysell-block">
                                     <?php if (!empty($msg)) { ?>
@@ -115,10 +125,10 @@ require_once('head.php'); ?>
                                                 <a href="#" class="buysell-cc-choosen dropdown-indicator" data-toggle="dropdown">
                                                     <div class="coin-item coin-btc">
                                                         <div class="coin-icon">
-                                                            <em class="icon ni ni-sign-dollar"></em>
+                                                            <em class="icon ni "><?php print $base_currency; ?></em>
                                                         </div>
                                                         <div class="coin-info">
-                                                            <span class="coin-name"><?php print  number_format($sqli->getRow($sqli->getEmail($_SESSION['user_code']), 'main_account_balance'), 2); ?> (USD)</span>
+                                                            <span class="coin-name"><?php print  number_format($sqli->getRow($sqli->getEmail($_SESSION['user_code']), 'main_account_balance'), 2); ?> </span>
                                                             <span class="coin-text">Last withdrawal: <?php print $sqli->getLastwithdrawalDate($sqli->getEmail($_SESSION['user_code'])); ?></span>
                                                         </div>
                                                     </div>
@@ -139,11 +149,11 @@ require_once('head.php'); ?>
                                                 <label class="form-label" for="buysell-amount">Amount to withdraw: <span class="text-danger">*</span></label>
                                             </div>
                                             <div class="form-control-group">
-                                                <input type="text" class="form-control form-control-lg form-control-number" id="buysell-amount" name="amount" placeholder="0.055960">
+                                                <input type="text" class="form-control form-control-lg form-control-number" id="buysell-amount" name="amount" placeholder="1000">
                                             </div>
                                             <div class="form-note-group">
-                                                <span class="buysell-min form-note-alt">Minimum: <?php print number_format($minimum_withdrawal, 2); ?> USD</span>
-                                                <span class="buysell-min form-note-alt">Withdrawal Chrage: <?php print number_format($withdrawal_charge, 2); ?> USD</span>
+                                                <span class="buysell-min form-note-alt">Minimum Withdrawal: <?php print $base_currency; ?><?php print number_format($minimum_withdrawal, 2); ?> </span>
+                                                <span class="buysell-min form-note-alt">Withdrawal Chrage: <?php print $base_currency; ?><?php print number_format($withdrawal_charge, 2); ?> </span>
                                             </div>
                                             <div style="margin-top: 20px;" class="form-label-group">
                                                 <label class="form-label" for="buysell-amount">Enter Security PIN: (<a href="profile-security">Don't have security PIN? <u>Update Now!</u></a>)<span class="text-danger">*</span></label>
@@ -152,36 +162,7 @@ require_once('head.php'); ?>
                                                 <input type="text" class="form-control form-control-lg form-control-number" id="pin" name="pin" placeholder="">
                                             </div>
                                         </div>
-                                        <div class="buysell-field form-group">
-                                            <div class="form-label-group">
-                                                <label class="form-label">Payment Method: <span class="text-danger">*</span></label>
-                                            </div>
-                                            <div class="form-pm-group">
-                                                <ul class="buysell-pm-list">
-                                                    <li class="buysell-pm-item">
-                                                        <input value="USDT" checked class="buysell-pm-control" type="radio" name="bs-method" id="pm-USDT" />
-                                                        <label class="buysell-pm-label" for="pm-USDT">
-                                                            <span class="pm-name">USDT</span>
-                                                            <span class="pm-icon"><em class="icon ni ni-tether"></em></span>
-                                                        </label>
-                                                    </li>
-                                                    <li class="buysell-pm-item">
-                                                        <input class="buysell-pm-control" type="radio" name="bs-method" id="pm-BTC" value="BTC" />
-                                                        <label class="buysell-pm-label" for="pm-BTC">
-                                                            <span class="pm-name">BTC</span>
-                                                            <span class="pm-icon"><em class="icon ni ni-bitcoin"></em></span>
-                                                        </label>
-                                                    </li>
-                                                    <li class="buysell-pm-item">
-                                                        <input class="buysell-pm-control" type="radio" name="bs-method" id="pm-ETH" value="ETH" />
-                                                        <label class="buysell-pm-label" for="pm-ETH">
-                                                            <span class="pm-name">ETH</span>
-                                                            <span class="pm-icon"><em class="icon ni ni-ethereum"></em></span>
-                                                        </label>
-                                                    </li>
-                                                </ul>
-                                            </div>
-                                        </div>
+
                                         <div class="buysell-field form-action">
                                             <button name="sub" class="btn btn-lg btn-block btn-primary">Continue to withdrawal</button>
                                         </div>

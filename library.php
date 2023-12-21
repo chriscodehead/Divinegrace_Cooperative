@@ -20,12 +20,10 @@ $site_eth = $row_u['eth'];
 $site_bnb = $row_u['bnb'];
 $usdt_network = $row_u['usdt_network'];
 
-
 $initial_pay = $row['initail'];
 $minimum_withdrawal = $row['min_withdraw'];
 $withdrawal_charge = $row['withdrawal_charge'];
 $base_currency = '₦';
-
 
 $planA = $row['level1'];
 $planB = $row['level2'];
@@ -81,13 +79,13 @@ $percentageC_D = "1.3";
 $percentageD_D = "20 - 22";
 $percentageE_D = "22 - 25";
 
-$durationA = 'Daily for 120 Day(s)';
-$durationB = 'Daily for 120 Day(s)';
-$durationC = 'Daily for 120 Day(s)';
-$durationD = 'Daily for 120 Day(s)';
-$durationE = 'Daily for 120 Day(s)';
-$durationF = 'Daily for 120 Day(s)';
-$durationG = 'Daily for 120 Day(s)';
+$durationA = $row['duration1'];
+$durationB = $row['duration2'];
+$durationC = $row['duration3'];
+$durationD = $row['duration4'];
+$durationE = $row['duration5'];
+$durationF = $row['duration6'];
+$durationG = $row['duration7'];
 
 $siteYear = date('Y');
 $companyNumber = '05065624';
@@ -124,6 +122,8 @@ $review = 'review';
 $savings_tb = 'savings_tb';
 $payment_account = 'payment_account';
 $top_up = 'top_up';
+$investment_tb = 'investment_tb';
+$my_savings = 'my_savings';
 
 class Cal extends DBConnection
 {
@@ -135,7 +135,15 @@ class Cal extends DBConnection
     protected $percentageF;
     protected $percentageG;
 
-    public function __construct($percentageA, $percentageB, $percentageC, $percentageD, $percentageE, $percentageF, $percentageG)
+    protected $durationA;
+    protected $durationB;
+    protected $durationC;
+    protected $durationD;
+    protected $durationE;
+    protected $durationF;
+    protected $durationG;
+
+    public function __construct($percentageA, $percentageB, $percentageC, $percentageD, $percentageE, $percentageF, $percentageG, $durationA, $durationB, $durationC, $durationD, $durationE, $durationF, $durationG)
     {
         $this->percentageA = $percentageA;
         $this->percentageB = $percentageB;
@@ -144,6 +152,14 @@ class Cal extends DBConnection
         $this->percentageE = $percentageE;
         $this->percentageF = $percentageF;
         $this->percentageG = $percentageG;
+
+        $this->durationA = $durationA;
+        $this->durationB = $durationB;
+        $this->durationC = $durationC;
+        $this->durationD = $durationD;
+        $this->durationE = $durationE;
+        $this->durationF = $durationF;
+        $this->durationG = $durationG;
     }
 
     private      $_query,
@@ -174,6 +190,8 @@ class Cal extends DBConnection
     protected $savings_tb = 'savings_tb';
     protected $payment_account = 'payment_account';
     protected $top_up = 'top_up';
+    protected $investment_tb = 'investment_tb';
+    protected $my_savings = 'my_savings';
 
     private static function generateQuestionMark($arr)
     {
@@ -266,7 +284,7 @@ class Cal extends DBConnection
                     }
                 }
             } else {
-                return 'invalid parameters.Empty arrays';
+                return 'invalid parameters. Empty arrays';
             }
         } else {
             return 'Invalid parameter. Parameter must be array!';
@@ -1028,7 +1046,7 @@ from this mailing list.
 
     public function add_interest_weeklyLA()
     {
-        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < 120 and plan_type='LEVEL1'  and `pause_status`=0";
+        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < '" . $this->durationA . "' and plan_type='LEVEL1'  and `pause_status`=0";
         $dbs = new DBConnection();
         $db = $dbs->DBConnections();
         $stmt = $db->prepare($sql);
@@ -1042,8 +1060,11 @@ from this mailing list.
                 $coin_type = $row['coin_type'];
                 $day_counter = $row['day_counter'];
                 $invest_week_day = $row['invest_week_day'];
+                $investment_date_on = $row['investment_date'];
+                $investment_date = date('j');
+
                 if ($plan_type == 'LEVEL1') {
-                    $weekly_interest = ($amount * ($this->percentageA / 100));
+                    $weekly_interest = $this->percentageA;
                 } else {
                     $weekly_interest = 0;
                 }
@@ -1053,21 +1074,22 @@ from this mailing list.
                 //and invest_week_day='".$day_on."'
                 //and day_counter < 8
                 //day_counter='".$new_count."', pause_status=1
-                $update = "UPDATE $this->deposit_tb SET intrest_growth='" . $adder . "' WHERE id='" . $id . "' and deposit_status='confirmed' and  day_counter < 121  and plan_type='LEVEL1'  ";
+                $update = "UPDATE $this->deposit_tb SET intrest_growth='" . $adder . "' WHERE id='" . $id . "' and deposit_status='confirmed' and  day_counter < '" . $this->durationA . "' and plan_type='LEVEL1' and investment_date='" . $investment_date . "' ";
                 query_sql($update);
 
-                //if ($day_on == $invest_week_day) {}
-                $main_account_balance = self::selectFrmDB($this->user_tb, 'main_account_balance', 'email', $email);
-                $new_balance = $main_account_balance + $weekly_interest;
-                $update2 = "UPDATE $this->user_tb SET main_account_balance='" . $new_balance . "' WHERE email='" . $email . "'  ";
-                query_sql($update2);
+                if ($investment_date == $investment_date_on) {
+                    $main_account_balance = self::selectFrmDB($this->user_tb, 'main_account_balance', 'email', $email);
+                    $new_balance = $main_account_balance + $weekly_interest;
+                    $update2 = "UPDATE $this->user_tb SET main_account_balance='" . $new_balance . "' WHERE email='" . $email . "'  ";
+                    query_sql($update2);
+                }
             }
         }
     }
 
     public function weekly_ConunterLA()
     {
-        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < 121 and plan_type='LEVEL1'  and `pause_status`=0 ";
+        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < '" . $this->durationA . "' and plan_type='LEVEL1'  and `pause_status`=0 ";
         $dbs = new DBConnection();
         $db = $dbs->DBConnections();
         $stmt = $db->prepare($sql);
@@ -1076,20 +1098,20 @@ from this mailing list.
                 $day_on = date('D');
                 $id = $row['id'];
                 $email = $row['email'];
+                $investment_date_on = $row['investment_date'];
+                $investment_date = date('j');
                 $count_value = $row['day_counter'];
                 $new_count_value = $count_value + 1;
                 $update = "UPDATE $this->deposit_tb SET day_counter='" . $new_count_value . "' WHERE id='" . $id . "' 
-			and deposit_status='confirmed' and day_counter < 121  and plan_type='LEVEL1'  ";
+			and deposit_status='confirmed' and day_counter < '" . $this->durationA . "'  and plan_type='LEVEL1' and investment_date='" . $investment_date . "' ";
                 query_sql($update);
             }
         }
     }
 
-
     public function add_interest_weeklyLB()
     {
-        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed'  and day_counter < 120 and  plan_type='LEVEL2'  and `pause_status`=0 ";
-        //
+        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < '" . $this->durationB . "' and plan_type='LEVEL2' and `pause_status`=0";
         $dbs = new DBConnection();
         $db = $dbs->DBConnections();
         $stmt = $db->prepare($sql);
@@ -1098,36 +1120,41 @@ from this mailing list.
                 $day_on = date('D');
                 $id = $row['id'];
                 $weekly_growth = $row['intrest_growth'];
-                $amount = $row['amount'];
+                $amount  = $row['amount'];
                 $plan_type = $row['plan_type'];
                 $coin_type = $row['coin_type'];
+                $day_counter = $row['day_counter'];
                 $invest_week_day = $row['invest_week_day'];
+                $investment_date_on = $row['investment_date'];
+                $investment_date = date('j');
+
                 if ($plan_type == 'LEVEL2') {
-                    $weekly_interest =  ($amount * ($this->percentageB / 100));
+                    $weekly_interest = $this->percentageB;
                 } else {
                     $weekly_interest = 0;
                 }
                 $adder = $weekly_growth + $weekly_interest;
                 $new_count = 24;
                 $email = $row['email'];
+                //and invest_week_day='".$day_on."'
+                //and day_counter < 8
                 //day_counter='".$new_count."', pause_status=1
-
-                $update = "UPDATE $this->deposit_tb SET intrest_growth='" . $adder . "'  WHERE id='" . $id . "' and deposit_status='confirmed' and  day_counter < 121  and plan_type='LEVEL2' ";
+                $update = "UPDATE $this->deposit_tb SET intrest_growth='" . $adder . "' WHERE id='" . $id . "' and deposit_status='confirmed' and  day_counter < '" . $this->durationB . "' and plan_type='LEVEL2' and investment_date='" . $investment_date . "' ";
                 query_sql($update);
 
-                //if ($day_on == $invest_week_day) { }
-
-                $main_account_balance = self::selectFrmDB($this->user_tb, 'main_account_balance', 'email', $email);
-                $new_balance = $main_account_balance + $weekly_interest;
-                $update2 = "UPDATE $this->user_tb SET main_account_balance='" . $new_balance . "' WHERE email='" . $email . "'  ";
-                query_sql($update2);
+                if ($investment_date == $investment_date_on) {
+                    $main_account_balance = self::selectFrmDB($this->user_tb, 'main_account_balance', 'email', $email);
+                    $new_balance = $main_account_balance + $weekly_interest;
+                    $update2 = "UPDATE $this->user_tb SET main_account_balance='" . $new_balance . "' WHERE email='" . $email . "'  ";
+                    query_sql($update2);
+                }
             }
         }
     }
 
     public function weekly_ConunterLB()
     {
-        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < 121 and plan_type='LEVEL2'  and `pause_status`=0 ";
+        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < '" . $this->durationB . "' and plan_type='LEVEL2'  and `pause_status`=0 ";
         $dbs = new DBConnection();
         $db = $dbs->DBConnections();
         $stmt = $db->prepare($sql);
@@ -1136,10 +1163,12 @@ from this mailing list.
                 $day_on = date('D');
                 $id = $row['id'];
                 $email = $row['email'];
+                $investment_date_on = $row['investment_date'];
+                $investment_date = date('j');
                 $count_value = $row['day_counter'];
                 $new_count_value = $count_value + 1;
                 $update = "UPDATE $this->deposit_tb SET day_counter='" . $new_count_value . "' WHERE id='" . $id . "' 
-			and deposit_status='confirmed' and day_counter < 121  and plan_type='LEVEL2' ";
+			and deposit_status='confirmed' and day_counter < '" . $this->durationB . "'  and plan_type='LEVEL2' and investment_date='" . $investment_date . "' ";
                 query_sql($update);
             }
         }
@@ -1147,8 +1176,7 @@ from this mailing list.
 
     public function add_interest_weeklyLC()
     {
-        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < 120 and plan_type='LEVEL3'  and `pause_status`=0 ";
-        //
+        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < '" . $this->durationC . "' and plan_type='LEVEL3'  and `pause_status`=0";
         $dbs = new DBConnection();
         $db = $dbs->DBConnections();
         $stmt = $db->prepare($sql);
@@ -1157,37 +1185,41 @@ from this mailing list.
                 $day_on = date('D');
                 $id = $row['id'];
                 $weekly_growth = $row['intrest_growth'];
-                $amount = $row['amount'];
+                $amount  = $row['amount'];
                 $plan_type = $row['plan_type'];
                 $coin_type = $row['coin_type'];
+                $day_counter = $row['day_counter'];
                 $invest_week_day = $row['invest_week_day'];
+                $investment_date_on = $row['investment_date'];
+                $investment_date = date('j');
+
                 if ($plan_type == 'LEVEL3') {
-                    $weekly_interest =  ($amount * ($this->percentageC / 100));
+                    $weekly_interest = $this->percentageC;
                 } else {
                     $weekly_interest = 0;
                 }
-
                 $adder = $weekly_growth + $weekly_interest;
                 $new_count = 24;
                 $email = $row['email'];
+                //and invest_week_day='".$day_on."'
+                //and day_counter < 8
                 //day_counter='".$new_count."', pause_status=1
-
-                $update = "UPDATE $this->deposit_tb SET intrest_growth='" . $adder . "'  WHERE id='" . $id . "' and deposit_status='confirmed' and day_counter < 121 and plan_type='LEVEL3' ";
+                $update = "UPDATE $this->deposit_tb SET intrest_growth='" . $adder . "' WHERE id='" . $id . "' and deposit_status='confirmed' and  day_counter < '" . $this->durationC . "' and plan_type='LEVEL3' and investment_date='" . $investment_date . "' ";
                 query_sql($update);
 
-                //if ($day_on == $invest_week_day) {}
-
-                $main_account_balance = self::selectFrmDB($this->user_tb, 'main_account_balance', 'email', $email);
-                $new_balance = $main_account_balance + $weekly_interest;
-                $update2 = "UPDATE $this->user_tb SET main_account_balance='" . $new_balance . "' WHERE email='" . $email . "'  ";
-                query_sql($update2);
+                if ($investment_date == $investment_date_on) {
+                    $main_account_balance = self::selectFrmDB($this->user_tb, 'main_account_balance', 'email', $email);
+                    $new_balance = $main_account_balance + $weekly_interest;
+                    $update2 = "UPDATE $this->user_tb SET main_account_balance='" . $new_balance . "' WHERE email='" . $email . "'  ";
+                    query_sql($update2);
+                }
             }
         }
     }
 
     public function weekly_ConunterLC()
     {
-        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < 121 and plan_type='LEVEL3'  and `pause_status`=0 ";
+        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < '" . $this->durationC . "' and plan_type='LEVEL3'  and `pause_status`=0 ";
         $dbs = new DBConnection();
         $db = $dbs->DBConnections();
         $stmt = $db->prepare($sql);
@@ -1196,10 +1228,12 @@ from this mailing list.
                 $day_on = date('D');
                 $id = $row['id'];
                 $email = $row['email'];
+                $investment_date_on = $row['investment_date'];
+                $investment_date = date('j');
                 $count_value = $row['day_counter'];
                 $new_count_value = $count_value + 1;
                 $update = "UPDATE $this->deposit_tb SET day_counter='" . $new_count_value . "' WHERE id='" . $id . "' 
-			and deposit_status='confirmed' and day_counter < 121  and plan_type='LEVEL3' ";
+			and deposit_status='confirmed' and day_counter < '" . $this->durationC . "'  and plan_type='LEVEL3' and investment_date='" . $investment_date . "' ";
                 query_sql($update);
             }
         }
@@ -1207,8 +1241,7 @@ from this mailing list.
 
     public function add_interest_weeklyLD()
     {
-        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < 120 and plan_type='LEVEL4'  and `pause_status`=0 ";
-        // 
+        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < '" . $this->durationD . "' and plan_type='LEVEL4'  and `pause_status`=0";
         $dbs = new DBConnection();
         $db = $dbs->DBConnections();
         $stmt = $db->prepare($sql);
@@ -1217,37 +1250,41 @@ from this mailing list.
                 $day_on = date('D');
                 $id = $row['id'];
                 $weekly_growth = $row['intrest_growth'];
-                $amount = $row['amount'];
+                $amount  = $row['amount'];
                 $plan_type = $row['plan_type'];
                 $coin_type = $row['coin_type'];
+                $day_counter = $row['day_counter'];
                 $invest_week_day = $row['invest_week_day'];
+                $investment_date_on = $row['investment_date'];
+                $investment_date = date('j');
+
                 if ($plan_type == 'LEVEL4') {
-                    $weekly_interest =  ($amount * ($this->percentageD / 100));
+                    $weekly_interest = $this->percentageD;
                 } else {
                     $weekly_interest = 0;
                 }
-
                 $adder = $weekly_growth + $weekly_interest;
                 $new_count = 24;
                 $email = $row['email'];
-                //day_counter='".$new_count."', pause_status=1 
-
-                $update = "UPDATE $this->deposit_tb SET intrest_growth='" . $adder . "'  WHERE id='" . $id . "' and deposit_status='confirmed' and day_counter < 121 and plan_type='LEVEL4' ";
+                //and invest_week_day='".$day_on."'
+                //and day_counter < 8
+                //day_counter='".$new_count."', pause_status=1
+                $update = "UPDATE $this->deposit_tb SET intrest_growth='" . $adder . "' WHERE id='" . $id . "' and deposit_status='confirmed' and  day_counter < '" . $this->durationD . "' and plan_type='LEVEL4' and investment_date='" . $investment_date . "' ";
                 query_sql($update);
 
-                //if ($day_on == $invest_week_day) {}
-
-                $main_account_balance = self::selectFrmDB($this->user_tb, 'main_account_balance', 'email', $email);
-                $new_balance = $main_account_balance + $weekly_interest;
-                $update2 = "UPDATE $this->user_tb SET main_account_balance='" . $new_balance . "' WHERE email='" . $email . "'  ";
-                query_sql($update2);
+                if ($investment_date == $investment_date_on) {
+                    $main_account_balance = self::selectFrmDB($this->user_tb, 'main_account_balance', 'email', $email);
+                    $new_balance = $main_account_balance + $weekly_interest;
+                    $update2 = "UPDATE $this->user_tb SET main_account_balance='" . $new_balance . "' WHERE email='" . $email . "'  ";
+                    query_sql($update2);
+                }
             }
         }
     }
 
     public function weekly_ConunterLD()
     {
-        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < 121 and plan_type='LEVEL4'  and `pause_status`=0 ";
+        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < '" . $this->durationD . "' and plan_type='LEVEL4'  and `pause_status`=0 ";
         $dbs = new DBConnection();
         $db = $dbs->DBConnections();
         $stmt = $db->prepare($sql);
@@ -1256,10 +1293,12 @@ from this mailing list.
                 $day_on = date('D');
                 $id = $row['id'];
                 $email = $row['email'];
+                $investment_date_on = $row['investment_date'];
+                $investment_date = date('j');
                 $count_value = $row['day_counter'];
                 $new_count_value = $count_value + 1;
                 $update = "UPDATE $this->deposit_tb SET day_counter='" . $new_count_value . "' WHERE id='" . $id . "' 
-			and deposit_status='confirmed' and day_counter < 121  and plan_type='LEVEL4' ";
+			and deposit_status='confirmed' and day_counter < '" . $this->durationD . "'  and plan_type='LEVEL4' and investment_date='" . $investment_date . "' ";
                 query_sql($update);
             }
         }
@@ -1267,7 +1306,7 @@ from this mailing list.
 
     public function add_interest_weeklyLE()
     {
-        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < 120 and plan_type='LEVEL5'  and `pause_status`=0 ";
+        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < '" . $this->durationE . "' and plan_type='LEVEL5' and `pause_status`=0";
         $dbs = new DBConnection();
         $db = $dbs->DBConnections();
         $stmt = $db->prepare($sql);
@@ -1276,35 +1315,41 @@ from this mailing list.
                 $day_on = date('D');
                 $id = $row['id'];
                 $weekly_growth = $row['intrest_growth'];
-                $amount = $row['amount'];
+                $amount  = $row['amount'];
                 $plan_type = $row['plan_type'];
                 $coin_type = $row['coin_type'];
+                $day_counter = $row['day_counter'];
                 $invest_week_day = $row['invest_week_day'];
+                $investment_date_on = $row['investment_date'];
+                $investment_date = date('j');
+
                 if ($plan_type == 'LEVEL5') {
-                    $weekly_interest =  ($amount * ($this->percentageE / 100));
+                    $weekly_interest = $this->percentageE;
                 } else {
                     $weekly_interest = 0;
                 }
-
                 $adder = $weekly_growth + $weekly_interest;
                 $new_count = 24;
                 $email = $row['email'];
-                $update = "UPDATE $this->deposit_tb SET intrest_growth='" . $adder . "' WHERE id='" . $id . "' and deposit_status='confirmed' and day_counter < 121  and plan_type='LEVEL5' ";
+                //and invest_week_day='".$day_on."'
+                //and day_counter < 8
+                //day_counter='".$new_count."', pause_status=1
+                $update = "UPDATE $this->deposit_tb SET intrest_growth='" . $adder . "' WHERE id='" . $id . "' and deposit_status='confirmed' and  day_counter < '" . $this->durationE . "' and plan_type='LEVEL5' and investment_date='" . $investment_date . "' ";
                 query_sql($update);
 
-                //if ($day_on == $invest_week_day) {}
-
-                $main_account_balance = self::selectFrmDB($this->user_tb, 'main_account_balance', 'email', $email);
-                $new_balance = $main_account_balance + $weekly_interest;
-                $update2 = "UPDATE $this->user_tb SET main_account_balance='" . $new_balance . "' WHERE email='" . $email . "'  ";
-                query_sql($update2);
+                if ($investment_date == $investment_date_on) {
+                    $main_account_balance = self::selectFrmDB($this->user_tb, 'main_account_balance', 'email', $email);
+                    $new_balance = $main_account_balance + $weekly_interest;
+                    $update2 = "UPDATE $this->user_tb SET main_account_balance='" . $new_balance . "' WHERE email='" . $email . "'  ";
+                    query_sql($update2);
+                }
             }
         }
     }
 
     public function weekly_ConunterLE()
     {
-        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < 121 and plan_type='LEVEL5'  and `pause_status`=0 ";
+        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < '" . $this->durationE . "' and plan_type='LEVEL5'  and `pause_status`=0 ";
         $dbs = new DBConnection();
         $db = $dbs->DBConnections();
         $stmt = $db->prepare($sql);
@@ -1313,19 +1358,20 @@ from this mailing list.
                 $day_on = date('D');
                 $id = $row['id'];
                 $email = $row['email'];
+                $investment_date_on = $row['investment_date'];
+                $investment_date = date('j');
                 $count_value = $row['day_counter'];
                 $new_count_value = $count_value + 1;
                 $update = "UPDATE $this->deposit_tb SET day_counter='" . $new_count_value . "' WHERE id='" . $id . "' 
-			and deposit_status='confirmed' and day_counter < 121 and plan_type='LEVEL5' ";
+			and deposit_status='confirmed' and day_counter < '" . $this->durationE . "'  and plan_type='LEVEL5' and investment_date='" . $investment_date . "' ";
                 query_sql($update);
             }
         }
     }
 
-
     public function add_interest_weeklyLF()
     {
-        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < 120 and plan_type='LEVEL6'  and `pause_status`=0 ";
+        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < '" . $this->durationF . "' and plan_type='LEVEL6'  and `pause_status`=0";
         $dbs = new DBConnection();
         $db = $dbs->DBConnections();
         $stmt = $db->prepare($sql);
@@ -1334,35 +1380,41 @@ from this mailing list.
                 $day_on = date('D');
                 $id = $row['id'];
                 $weekly_growth = $row['intrest_growth'];
-                $amount = $row['amount'];
+                $amount  = $row['amount'];
                 $plan_type = $row['plan_type'];
                 $coin_type = $row['coin_type'];
+                $day_counter = $row['day_counter'];
                 $invest_week_day = $row['invest_week_day'];
+                $investment_date_on = $row['investment_date'];
+                $investment_date = date('j');
+
                 if ($plan_type == 'LEVEL6') {
-                    $weekly_interest =  ($amount * ($this->percentageF / 100));
+                    $weekly_interest = $this->percentageF;
                 } else {
                     $weekly_interest = 0;
                 }
-
                 $adder = $weekly_growth + $weekly_interest;
                 $new_count = 24;
                 $email = $row['email'];
-                $update = "UPDATE $this->deposit_tb SET intrest_growth='" . $adder . "' WHERE id='" . $id . "' and deposit_status='confirmed' and day_counter < 121  and plan_type='LEVEL6' ";
+                //and invest_week_day='".$day_on."'
+                //and day_counter < 8
+                //day_counter='".$new_count."', pause_status=1
+                $update = "UPDATE $this->deposit_tb SET intrest_growth='" . $adder . "' WHERE id='" . $id . "' and deposit_status='confirmed' and  day_counter < '" . $this->durationF . "' and plan_type='LEVEL6' and investment_date='" . $investment_date . "' ";
                 query_sql($update);
 
-                //if ($day_on == $invest_week_day) {}
-
-                $main_account_balance = self::selectFrmDB($this->user_tb, 'main_account_balance', 'email', $email);
-                $new_balance = $main_account_balance + $weekly_interest;
-                $update2 = "UPDATE $this->user_tb SET main_account_balance='" . $new_balance . "' WHERE email='" . $email . "'  ";
-                query_sql($update2);
+                if ($investment_date == $investment_date_on) {
+                    $main_account_balance = self::selectFrmDB($this->user_tb, 'main_account_balance', 'email', $email);
+                    $new_balance = $main_account_balance + $weekly_interest;
+                    $update2 = "UPDATE $this->user_tb SET main_account_balance='" . $new_balance . "' WHERE email='" . $email . "'  ";
+                    query_sql($update2);
+                }
             }
         }
     }
 
     public function weekly_ConunterLF()
     {
-        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < 121 and plan_type='LEVEL6'  and `pause_status`=0 ";
+        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < '" . $this->durationF . "' and plan_type='LEVEL6'  and `pause_status`=0 ";
         $dbs = new DBConnection();
         $db = $dbs->DBConnections();
         $stmt = $db->prepare($sql);
@@ -1371,19 +1423,20 @@ from this mailing list.
                 $day_on = date('D');
                 $id = $row['id'];
                 $email = $row['email'];
+                $investment_date_on = $row['investment_date'];
+                $investment_date = date('j');
                 $count_value = $row['day_counter'];
                 $new_count_value = $count_value + 1;
                 $update = "UPDATE $this->deposit_tb SET day_counter='" . $new_count_value . "' WHERE id='" . $id . "' 
-			and deposit_status='confirmed' and day_counter < 121 and plan_type='LEVEL6' ";
+			and deposit_status='confirmed' and day_counter < '" . $this->durationF . "'  and plan_type='LEVEL6' and investment_date='" . $investment_date . "' ";
                 query_sql($update);
             }
         }
     }
 
-
     public function add_interest_weeklyLG()
     {
-        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < 120 and plan_type='LEVEL7'  and `pause_status`=0 ";
+        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < '" . $this->durationG . "' and plan_type='LEVEL7'  and `pause_status`=0";
         $dbs = new DBConnection();
         $db = $dbs->DBConnections();
         $stmt = $db->prepare($sql);
@@ -1392,35 +1445,41 @@ from this mailing list.
                 $day_on = date('D');
                 $id = $row['id'];
                 $weekly_growth = $row['intrest_growth'];
-                $amount = $row['amount'];
+                $amount  = $row['amount'];
                 $plan_type = $row['plan_type'];
                 $coin_type = $row['coin_type'];
+                $day_counter = $row['day_counter'];
                 $invest_week_day = $row['invest_week_day'];
+                $investment_date_on = $row['investment_date'];
+                $investment_date = date('j');
+
                 if ($plan_type == 'LEVEL7') {
-                    $weekly_interest =  ($amount * ($this->percentageG / 100));
+                    $weekly_interest = $this->percentageG;
                 } else {
                     $weekly_interest = 0;
                 }
-
                 $adder = $weekly_growth + $weekly_interest;
                 $new_count = 24;
                 $email = $row['email'];
-                $update = "UPDATE $this->deposit_tb SET intrest_growth='" . $adder . "' WHERE id='" . $id . "' and deposit_status='confirmed' and day_counter < 121  and plan_type='LEVEL7' ";
+                //and invest_week_day='".$day_on."'
+                //and day_counter < 8
+                //day_counter='".$new_count."', pause_status=1
+                $update = "UPDATE $this->deposit_tb SET intrest_growth='" . $adder . "' WHERE id='" . $id . "' and deposit_status='confirmed' and  day_counter < '" . $this->durationG . "' and plan_type='LEVEL7' and investment_date='" . $investment_date . "' ";
                 query_sql($update);
 
-                //if ($day_on == $invest_week_day) {}
-
-                $main_account_balance = self::selectFrmDB($this->user_tb, 'main_account_balance', 'email', $email);
-                $new_balance = $main_account_balance + $weekly_interest;
-                $update2 = "UPDATE $this->user_tb SET main_account_balance='" . $new_balance . "' WHERE email='" . $email . "'  ";
-                query_sql($update2);
+                if ($investment_date == $investment_date_on) {
+                    $main_account_balance = self::selectFrmDB($this->user_tb, 'main_account_balance', 'email', $email);
+                    $new_balance = $main_account_balance + $weekly_interest;
+                    $update2 = "UPDATE $this->user_tb SET main_account_balance='" . $new_balance . "' WHERE email='" . $email . "'  ";
+                    query_sql($update2);
+                }
             }
         }
     }
 
     public function weekly_ConunterLG()
     {
-        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < 121 and plan_type='LEVEL7'  and `pause_status`=0 ";
+        $sql = "SELECT * FROM $this->deposit_tb WHERE deposit_status='confirmed' and day_counter < '" . $this->durationG . "' and plan_type='LEVEL7' and `pause_status`=0 ";
         $dbs = new DBConnection();
         $db = $dbs->DBConnections();
         $stmt = $db->prepare($sql);
@@ -1429,16 +1488,16 @@ from this mailing list.
                 $day_on = date('D');
                 $id = $row['id'];
                 $email = $row['email'];
+                $investment_date_on = $row['investment_date'];
+                $investment_date = date('j');
                 $count_value = $row['day_counter'];
                 $new_count_value = $count_value + 1;
                 $update = "UPDATE $this->deposit_tb SET day_counter='" . $new_count_value . "' WHERE id='" . $id . "' 
-			and deposit_status='confirmed' and day_counter < 121 and plan_type='LEVEL7' ";
+			and deposit_status='confirmed' and day_counter < '" . $this->durationG . "' and plan_type='LEVEL7' and investment_date='" . $investment_date . "' ";
                 query_sql($update);
             }
         }
     }
-
-
 
     public function checkLogedIN($sendTopage)
     {
@@ -1521,7 +1580,7 @@ from this mailing list.
         }
     }
 }
-$cal = new Cal($percentageA, $percentageB, $percentageC, $percentageD, $percentageE, $percentageF, $percentageG);
+$cal = new Cal($percentageA, $percentageB, $percentageC, $percentageD, $percentageE, $percentageF, $percentageG, $durationA, $durationB, $durationC, $durationD, $durationE, $durationF, $durationG);
 
 ?>
 <?php

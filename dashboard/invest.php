@@ -90,7 +90,7 @@ if (isset($_POST['submit'])) {
                   <div class="nk-block-head-content text-center">
                     <h2 class="nk-block-title fw-normal">Create Investment</h2>
                     <div class="nk-block-des">
-                      <p>Start earning by creating an investment. <?php print $sqli->countInvestments($sqli->getEmail($_SESSION['user_code']), 2); ?></p>
+                      <p>Start earning by creating an investment.</p>
                     </div>
                   </div>
                 </div>
@@ -129,51 +129,57 @@ if (isset($_POST['submit'])) {
                                   $chk = '';
                                 }
                               ?>
-                                <div class="col-sm-6 col-xl-4">
-                                  <div class="card card-bordered h-100">
-                                    <div class="card-inner">
-                                      <div class="project">
-                                        <div class="project-head">
-                                          <h6><?php print $row['level' . $i]; ?></h6>
-                                        </div>
-                                        <div class="project-details">
-                                          <p>Min: <?php print $base_currency; ?><?php print number_format($row['min' . $i]); ?> </p>
 
-                                          <p> Max: <?php print $base_currency; ?><?php print number_format($row['max' . $i]); ?></p>
+                                <?php if ($sqli->countInvestments($sqli->getEmail($_SESSION['user_code']), $i) < $row['slot' . $i]) { ?>
+                                  <div class="col-sm-6 col-xl-4 link-muted">
+                                    <div class="card card-bordered h-100">
+                                      <div class="card-inner">
+                                        <div class="project">
+                                          <div class="project-head">
+                                            <h6><?php print $row['level' . $i]; ?></h6>
+                                          </div>
+                                          <div class="project-details">
+                                            <p>Min: <?php print $base_currency; ?><?php print number_format($row['min' . $i]); ?> </p>
 
-                                          <p>R.O.I: <?php print $base_currency; ?><?php print number_format($row['profit' . $i]); ?> Monthly After
-                                            <?php print $row['duration' . $i]; ?> Months
-                                          </p>
+                                            <p> Max: <?php print $base_currency; ?><?php print number_format($row['max' . $i]); ?></p>
 
-                                          <p> Slot: <?php print $base_currency; ?><?php print number_format($row['slot' . $i]); ?></p>
+                                            <p>R.O.I: <?php print $base_currency; ?><?php print number_format($row['profit' . $i]); ?> Monthly After
+                                              <?php print $row['duration' . $i]; ?> Months
+                                            </p>
 
-                                          <p class="cont">
-                                            <center>
-                                              <div class="user-avatar sm bg-blue"><span>
-                                                  <input <?php print $chk; ?> value="<?php print $i; ?>" type="radio" name="plan" id="plan<?php print $i; ?>"></span>
-                                              </div>
+                                            <p> Maximum Slot: <?php print $row['slot' . $i]; ?></p>
+
+                                            <p class="cont">
+                                              <center>
+                                                <div class="user-avatar sm bg-blue"><span>
+                                                    <input <?php print $chk; ?> value="<?php print $i; ?>" type="radio" name="plan" id="plan<?php print $i; ?>"></span>
+                                                </div>
+                                              </center>
+                                            </p>
+                                            <input type="hidden" name="min<?php print $i; ?>" id="min<?php print $i; ?>" value="<?php print $row['min' . $i]; ?>">
+                                            <input type="hidden" name="max<?php print $i; ?>" id="max<?php print $i; ?>" value="<?php print $row['max' . $i]; ?>">
+                                            <input type="hidden" name="plan_type<?php print $i; ?>" id="plan_type<?php print $i; ?>" value="<?php print $i; ?>">
+                                            <input type="hidden" id="duration<?php print $i; ?>" name="duration<?php print $i; ?>" value="<?php print $row['duration' . $i]; ?>">
+                                          </div>
+                                          <div class="project-progress">
+                                            <div class="project-progress-details">
+                                              <div class="project-progress-percent"></div>
+                                            </div>
+                                            <div class="progress progress-pill progress-md bg-light">
+                                              <div class="progress-bar" data-progress="93.5"></div>
+                                            </div>
+                                            <center style="margin-top: 20px;">
+                                              <a data-bs-toggle="modal" data-bs-target="#staticBackdrop<?php print $i; ?>" class="btn btn-primary text-white">Details</a>
                                             </center>
-                                          </p>
-                                          <input type="hidden" name="min<?php print $i; ?>" id="min<?php print $i; ?>" value="<?php print $row['min' . $i]; ?>">
-                                          <input type="hidden" name="max<?php print $i; ?>" id="max<?php print $i; ?>" value="<?php print $row['max' . $i]; ?>">
-                                          <input type="hidden" name="plan_type<?php print $i; ?>" id="plan_type<?php print $i; ?>" value="<?php print $i; ?>">
-                                          <input type="hidden" id="duration<?php print $i; ?>" name="duration<?php print $i; ?>" value="<?php print $row['duration' . $i]; ?>">
-                                        </div>
-                                        <div class="project-progress">
-                                          <div class="project-progress-details">
-                                            <div class="project-progress-percent"></div>
                                           </div>
-                                          <div class="progress progress-pill progress-md bg-light">
-                                            <div class="progress-bar" data-progress="93.5"></div>
-                                          </div>
-                                          <center style="margin-top: 20px;">
-                                            <a data-bs-toggle="modal" data-bs-target="#staticBackdrop<?php print $i; ?>" class="btn btn-primary text-white">Details</a>
-                                          </center>
                                         </div>
                                       </div>
                                     </div>
                                   </div>
-                                </div>
+                                <?php } else {
+                                } ?>
+
+
 
                                 <!-- Modal -->
                                 <div class="modal fade" id="staticBackdrop<?php print $i; ?>" data-bs-backdrop="static" data-bs-keyboard="false" tabindex="-1" aria-labelledby="staticBackdropLabel" aria-hidden="true">

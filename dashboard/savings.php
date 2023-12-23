@@ -91,7 +91,7 @@ if (isset($_POST['submit'])) {
 
                           <span style="font-size: 16px; color: orange;" class="coin-name"> </span>
 
-                          <a href="my-savings" class="btn btn-primary">View Savings History</a>
+                          <a href="my-savings" class="btn btn-primary">View Savings Account</a>
 
                         </div>
                       </div>
